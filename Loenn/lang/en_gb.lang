@@ -1,0 +1,18 @@
+mods.MoreLockBlocks.name=More Lock Blocks
+
+# Glass Lock Block
+entities.MoreLockBlocks/GlassLockBlock.placements.name.glassLockBlock=Glass Lock Block
+entities.MoreLockBlocks/GlassLockBlock.attributes.description.unlock_sfx=The event that will play when the lock block is unlocked. Defaults to "event:/game/03_resort/key_unlock".
+entities.MoreLockBlocks/GlassLockBlock.attributes.description.stepMusicProgress=Whether to increase the music progress on the current track by 1 after this lock block is unlocked.
+entities.MoreLockBlocks/GlassLockBlock.attributes.description.behindFgTiles=Whether this lock block will render behind foreground tiles.
+
+# Glass Lock Block Controller
+entities.MoreLockBlocks/GlassLockBlockController.placements.name.controller=Glass Lock Block Controller
+entities.MoreLockBlocks/GlassLockBlockController.placements.name.controller_vanilla=Glass Lock Block Controller (Vanilla Settings)
+entities.MoreLockBlocks/GlassLockBlockController.attributes.description.starColors=The colors of stars on Glass Lock Blocks affected by this controller.
+entities.MoreLockBlocks/GlassLockBlockController.attributes.description.bgColor=The color of the background on Glass Lock Blocks affected by this controller.
+entities.MoreLockBlocks/GlassLockBlockController.attributes.description.lineColor=The color of the outline on Glass Lock Blocks affected by this controller.
+entities.MoreLockBlocks/GlassLockBlockController.attributes.description.rayColor=The color of the rays on Glass Lock Blocks affected by this controller.
+entities.MoreLockBlocks/GlassLockBlockController.attributes.description.wavy=Whether to render the wavy effect on Glass Lock Blocks affected by this controller.
+entities.MoreLockBlocks/GlassLockBlockController.attributes.description.vanillaEdgeBehavior=Whether to have the edges of Glass Lock Blocks affected by this controller display like vanilla glass block edges.
+entities.MoreLockBlocks/GlassLockBlockController.attributes.description.persistent=Whether this controller's effects should persist after leaving the room this controller is in.
