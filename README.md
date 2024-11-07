@@ -1,2 +1,2 @@
 # MoreLockBlocks
-Replace with your mod's readme!
+the world needs more lock blocks
