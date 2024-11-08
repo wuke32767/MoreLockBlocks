@@ -2,9 +2,12 @@ mods.MoreLockBlocks.name=More Lock Blocks
 
 # Glass Lock Block
 entities.MoreLockBlocks/GlassLockBlock.placements.name.glassLockBlock=Glass Lock Block
+entities.MoreLockBlocks/GlassLockBlock.attributes.description.spritePath=The path to use for the lock sprites. The images this path points to must be in the same format as the vanilla ones.
 entities.MoreLockBlocks/GlassLockBlock.attributes.description.unlock_sfx=The event that will play when the lock block is unlocked. Defaults to "event:/game/03_resort/key_unlock".
 entities.MoreLockBlocks/GlassLockBlock.attributes.description.stepMusicProgress=Whether to increase the music progress on the current track by 1 after this lock block is unlocked.
 entities.MoreLockBlocks/GlassLockBlock.attributes.description.behindFgTiles=Whether this lock block will render behind foreground tiles.
+entities.MoreLockBlocks/GlassLockBlock.attributes.description.useVanillaKeys=Whether this lock block should be openable by vanilla keys.
+entities.MoreLockBlocks/GlassLockBlock.attributes.description.dzhakeHelperKeySettings=Describes which Dzhake Helper Custom Key groups (if any) this lock block is compatible with.\nLeft empty: this lock block is incompatible with Dzhake Helper keys.\n*: this lock block is openable by all Dzhake Helper keys.\nAny integer: this lock block is unlockable by a Dzhake Helper key with the specified Group. 
 
 # Glass Lock Block Controller
 entities.MoreLockBlocks/GlassLockBlockController.placements.name.controller=Glass Lock Block Controller

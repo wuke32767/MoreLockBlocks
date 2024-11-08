@@ -4,3 +4,6 @@
   Dependencies:
     - Name: EverestCore
       Version: 1.4673.0
+  OptionalDependencies:
+    - Name: DzhakeHelper
+      Version: 1.4.9

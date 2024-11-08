@@ -28,6 +28,10 @@
         <Reference Include="$(CelestePrefix)\FNA.dll" Private="false" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Reference Include="lib-stripped\DzhakeHelper.dll" Private="false"/>
+    </ItemGroup>
+
     <Target Name="CopyFiles" AfterTargets="Build" Inputs="$(OutputPath)\$(AssemblyName).dll;$(OutputPath)\$(AssemblyName).pdb" Outputs="..\bin\$(AssemblyName).dll;..\bin\$(AssemblyName).pdb">
         <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="..\bin" />
         <Copy SourceFiles="$(OutputPath)\$(AssemblyName).pdb" DestinationFolder="..\bin" />
@@ -39,15 +43,13 @@
         </ItemGroup>
         <PackageMod Files="@(FilesToPackage)" OutputPath="..\MoreLockBlocks.zip" />
     </Target>
-    
+
     <PropertyGroup>
         <PathMap>$(MSBuildProjectDirectory)=MoreLockBlocks/</PathMap>
     </PropertyGroup>
 
     <!-- Inline task used to create a .zip for the mod -->
-    <UsingTask TaskName="PackageMod"
-               TaskFactory="RoslynCodeTaskFactory"
-               AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+    <UsingTask TaskName="PackageMod" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
         <ParameterGroup>
             <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
             <OutputPath ParameterType="System.String" Required="true" />
@@ -56,7 +58,7 @@
             <Using Namespace="System.IO" />
             <Using Namespace="System.IO.Compression" />
             <Code Type="Fragment" Language="cs">
-            <![CDATA[
+                <![CDATA[
                 var projectDir = Path.Combine(@"$(ProjectDir)", ".."); // Go one level up, since we're inside the 'Source' directory
                 projectDir = Uri.UnescapeDataString(projectDir);
             

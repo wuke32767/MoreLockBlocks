@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.MoreLockBlocks;
@@ -19,5 +21,17 @@ public static class Extensions
     public static Vector2 BottomRight(this Rectangle rect)
     {
         return new Vector2(rect.Right, rect.Bottom);
+    }
+
+    public static int LastIndexWhere<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+    {
+        int index = 0;
+        int resultIndex = -1;
+        foreach (T item in source)
+        {
+            if (predicate.Invoke(item)) resultIndex = index;
+            index++;
+        }
+        return resultIndex;
     }
 }

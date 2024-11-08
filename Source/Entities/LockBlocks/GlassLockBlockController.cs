@@ -355,6 +355,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null, camera.Matrix);
         }
 
+        #region Hooks
+
         public static void Load()
         {
             On.Celeste.Level.LoadLevel += Level_LoadLevel;
@@ -367,11 +369,12 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         private static void Level_LoadLevel(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes playerIntro, bool isFromLoader)
         {
-            if (MoreLockBlocksModule.Session.GlassLockBlockCurrentSettings != null && self.Session.LevelData != null && !self.Session.LevelData.Entities.Any((EntityData entity) => entity.Name == "MoreLockBlocks/GlassLockBlockController"))
+            if (self.Session.LevelData != null && !self.Session.LevelData.Entities.Any((EntityData entity) => entity.Name == "MoreLockBlocks/GlassLockBlockController"))
             {
-                EntityData restoredData = new()
+                EntityData restoredData = new();
+                if (MoreLockBlocksModule.Session.GlassLockBlockCurrentSettings is not null)
                 {
-                    Values = new Dictionary<string, object>
+                    restoredData.Values = new Dictionary<string, object>
                     {
                         {
                             "starColors",
@@ -398,15 +401,12 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                             MoreLockBlocksModule.Session.GlassLockBlockCurrentSettings.VanillaEdgeBehavior
                         },
                         { "persistent", true }
-                    }
-                };
-                self.Add(new GlassLockBlockController(restoredData, Vector2.Zero));
-            }
-            else if (MoreLockBlocksModule.Session.GlassLockBlockCurrentSettings == null && self.Session.LevelData != null && !self.Session.LevelData.Entities.Any((EntityData entity) => entity.Name == "MoreLockBlocks/GlassLockBlockController"))
-            {
-                EntityData restoredData = new()
+                    };
+                    self.Add(new GlassLockBlockController(restoredData, Vector2.Zero));
+                }
+                else
                 {
-                    Values = new Dictionary<string, object>
+                    restoredData.Values = new Dictionary<string, object>
                     {
                         { "starColors", "7f9fba,9bd1cd,bacae3" },
                         { "bgColor", "0d2e89" },
@@ -415,11 +415,14 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                         { "wavy", true },
                         { "vanillaEdgeBehavior", true },
                         { "persistent", true }
-                    }
-                };
+                    };
+
+                }
                 self.Add(new GlassLockBlockController(restoredData, Vector2.Zero));
             }
             orig(self, playerIntro, isFromLoader);
         }
+
+        #endregion
     }
 }
