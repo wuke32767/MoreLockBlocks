@@ -1,8 +1,9 @@
-using System.Collections;
 using Microsoft.Xna.Framework;
 using Monocle;
-using Celeste.Mod.DzhakeHelper.Entities;
+using System.Collections;
 using System.Runtime.CompilerServices;
+using Celeste.Mod.DzhakeHelper;
+using Celeste.Mod.DzhakeHelper.Entities;
 
 namespace Celeste.Mod.MoreLockBlocks.Entities
 {
@@ -103,9 +104,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                     TryOpen(player, follower);
                     break;
                 }
-                if (follower.Entity is CustomKey key2 && !openingSettings.DzhakeHelperKeysNone && (openingSettings.DzhakeHelperKeysAll || key2.OpenAny || key2.Group == openingSettings.DzhakeHelperKeyGroup) && !key2.StartedUsing)
+                if (follower.Entity is CustomKey key2 && !key2.StartedUsing && !openingSettings.DzhakeHelperKeysNone && (openingSettings.DzhakeHelperKeysAll || key2.OpenAny || key2.Group == openingSettings.DzhakeHelperKeyGroup))
                 {
-                    AddTag(Tags.Global);
                     TryOpen(player, follower);
                     break;
                 }
@@ -230,6 +230,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 {
                     yield return null;
                 }
+
+                // the sneaky bugger
+                DzhakeHelperModule.Session.CurrentKeys.RemoveAll((CustomKey.CustomKeyInfo info) => info.ID.ID == key2.ID.ID);
             }
 
             Tag |= Tags.TransitionUpdate;
