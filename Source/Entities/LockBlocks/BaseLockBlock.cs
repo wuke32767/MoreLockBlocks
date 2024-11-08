@@ -105,6 +105,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 }
                 if (follower.Entity is CustomKey key2 && !openingSettings.DzhakeHelperKeysNone && (openingSettings.DzhakeHelperKeysAll || key2.OpenAny || key2.Group == openingSettings.DzhakeHelperKeyGroup) && !key2.StartedUsing)
                 {
+                    AddTag(Tags.Global);
                     TryOpen(player, follower);
                     break;
                 }
