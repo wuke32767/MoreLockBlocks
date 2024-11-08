@@ -212,7 +212,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             if (stepMusicProgress)
             {
                 level.Session.Audio.Music.Progress++;
-                level.Session.Audio.Apply(forceSixteenthNoteHack: false);
+                level.Session.Audio.Apply();
             }
             level.Session.DoNotLoad.Add(ID);
             if (key is not null)
@@ -262,7 +262,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             if (stepMusicProgress)
             {
                 level.Session.Audio.Music.Progress++;
-                level.Session.Audio.Apply(forceSixteenthNoteHack: false);
+                level.Session.Audio.Apply();
             }
             level.Session.DoNotLoad.Add(ID);
             key.RegisterUsed();
