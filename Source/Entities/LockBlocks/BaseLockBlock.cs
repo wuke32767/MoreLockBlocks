@@ -218,6 +218,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             if (key is not null)
             {
                 key.RegisterUsed();
+
                 while (key.Turning)
                 {
                     yield return null;
@@ -226,13 +227,12 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             else if (key2 is not null)
             {
                 key2.RegisterUsed();
+                DzhakeHelperModule.Session.CurrentKeys.RemoveAll(info => info.ID.ID == key2.ID.ID);
+
                 while (key2.Turning)
                 {
                     yield return null;
                 }
-
-                // the sneaky bugger
-                DzhakeHelperModule.Session.CurrentKeys.RemoveAll((CustomKey.CustomKeyInfo info) => info.ID.ID == key2.ID.ID);
             }
 
             Tag |= Tags.TransitionUpdate;
