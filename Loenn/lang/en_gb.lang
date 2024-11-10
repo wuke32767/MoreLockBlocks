@@ -6,8 +6,8 @@ entities.MoreLockBlocks/GlassLockBlock.attributes.description.spritePath=The pat
 entities.MoreLockBlocks/GlassLockBlock.attributes.description.unlock_sfx=The event that will play when the lock block is unlocked. Defaults to "event:/game/03_resort/key_unlock".
 entities.MoreLockBlocks/GlassLockBlock.attributes.description.stepMusicProgress=Whether to increase the music progress on the current track by 1 after this lock block is unlocked.
 entities.MoreLockBlocks/GlassLockBlock.attributes.description.behindFgTiles=Whether this lock block will render behind foreground tiles.
-entities.MoreLockBlocks/GlassLockBlock.attributes.description.useVanillaKeys=Whether this lock block should be openable by vanilla keys.
-entities.MoreLockBlocks/DreamLockBlock.attributes.description.dzhakeHelperKeySettings=Describes which Dzhake Helper Custom Key groups (if any) this lock block can be unlocked by.\nLeft empty: this lock block cannot be unlocked with Dzhake Helper keys.\n*: this lock block can be unlocked with any Dzhake Helper key.\nAny integer: this lock block can be unlocked with a Dzhake Helper key with the specified Group. 
+entities.MoreLockBlocks/GlassLockBlock.attributes.description.useVanillaKeys=Whether this lock block can be unlocked by vanilla keys.
+entities.MoreLockBlocks/DreamLockBlock.attributes.description.dzhakeHelperKeySettings=Describes which Dzhake Helper Custom Key groups (if any) this lock block can be unlocked by.\nLeft empty: this lock block cannot be unlocked by Dzhake Helper keys.\n*: this lock block can be unlocked by any Dzhake Helper key.\nAny integer: this lock block can only be unlocked by a Dzhake Helper key with the specified Group. 
 
 # Glass Lock Block Controller
 entities.MoreLockBlocks/GlassLockBlockController.placements.name.controller=Glass Lock Block Controller
@@ -26,5 +26,5 @@ entities.MoreLockBlocks/DreamLockBlock.attributes.description.spritePath=The pat
 entities.MoreLockBlocks/DreamLockBlock.attributes.description.unlock_sfx=The event that will play when the lock block is unlocked. Defaults to "event:/game/03_resort/key_unlock".
 entities.MoreLockBlocks/DreamLockBlock.attributes.description.stepMusicProgress=Whether to increase the music progress on the current track by 1 after this lock block is unlocked.
 entities.MoreLockBlocks/DreamLockBlock.attributes.description.below=Whether this lock block will render behind foreground tiles.
-entities.MoreLockBlocks/DreamLockBlock.attributes.description.useVanillaKeys=Whether this lock block should be openable by vanilla keys.
-entities.MoreLockBlocks/DreamLockBlock.attributes.description.dzhakeHelperKeySettings=Describes which Dzhake Helper Custom Key groups (if any) this lock block can be unlocked by.\nLeft empty: this lock block cannot be unlocked with Dzhake Helper keys.\n*: this lock block can be unlocked with any Dzhake Helper key.\nAny integer: this lock block can be unlocked with a Dzhake Helper key with the specified Group. 
+entities.MoreLockBlocks/DreamLockBlock.attributes.description.useVanillaKeys=Whether this lock block can be unlocked by vanilla keys.
+entities.MoreLockBlocks/DreamLockBlock.attributes.description.dzhakeHelperKeySettings=Describes which Dzhake Helper Custom Key groups (if any) this lock block can be unlocked by.\nLeft empty: this lock block cannot be unlocked by Dzhake Helper keys.\n*: this lock block can be unlocked by any Dzhake Helper key.\nAny integer: this lock block can only be unlocked by a Dzhake Helper key with the specified Group. 
