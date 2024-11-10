@@ -116,7 +116,6 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         {
             SurfaceSoundIndex = 11;
             dummyBelow = data.Bool("below", false);
-            // DisableLightsInside = true; // maybe
         }
 
         public override void Added(Scene scene)
