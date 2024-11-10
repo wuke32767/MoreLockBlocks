@@ -49,7 +49,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 for (float p2 = 1f; p2 > 0f; p2 -= Engine.DeltaTime / unlockDuration)
                 {
                     whiteHeight = Ease.CubeOut(p2);
-                    Glitch.Value = p2 * 0.15f;
+                    Glitch.Value = p2 * 0.2f;
                     if (level.OnInterval(0.1f))
                     {
                         for (int i = 0; i < Width; i += 4)
