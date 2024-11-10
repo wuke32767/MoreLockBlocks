@@ -31,7 +31,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         protected readonly string unlockSfxName;
 
-        public BaseLockBlock(EntityData data, Vector2 offset, EntityID id, string defaultSpriteID) : base(data.Position + offset, 32f, 32f, false)
+        public BaseLockBlock(EntityData data, Vector2 offset, EntityID id, string defaultSpriteID, string defaultUnlockSfx = "event:/game/03_resort/key_unlock") : base(data.Position + offset, 32f, 32f, false)
         {
             ID = id;
             DisableLightsInside = false;
@@ -53,7 +53,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             stepMusicProgress = data.Bool("stepMusicProgress", false);
             if (string.IsNullOrWhiteSpace(unlockSfxName = data.Attr("unlock_sfx", "")))
-                unlockSfxName = "event:/game/03_resort/key_unlock";
+                unlockSfxName = defaultUnlockSfx;
             else
                 unlockSfxName = SFX.EventnameByHandle(unlockSfxName);
         }

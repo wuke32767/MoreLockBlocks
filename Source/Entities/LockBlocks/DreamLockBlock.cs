@@ -20,8 +20,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         {
             private readonly DreamLockBlock parent;
 
-            private const float unlockDuration = 0.2f;
-            private const float chargeUpDuration = 0.5f, chargeDownDuration = 0.1f;
+            private const float unlockDuration = 0.25f;
+            private const float chargeUpDuration = 0.55f, chargeDownDuration = 0.1f;
 
             public DreamBlockDummy(Vector2 position, DreamLockBlock parent, bool below) : base(position, 32, 32, null, false, false, below)
             {
@@ -112,7 +112,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         private readonly bool dummyBelow;
 
-        public DreamLockBlock(EntityData data, Vector2 offset, EntityID id) : base(data, offset, id, "lockdoor_generic_lock")
+        public DreamLockBlock(EntityData data, Vector2 offset, EntityID id) : base(data, offset, id, "lockdoor_generic_lock", MoreLockBlocksSFX.game_lockblocks_dreamlockblock_key_unlock)
         {
             SurfaceSoundIndex = 11;
             dummyBelow = data.Bool("below", false);
