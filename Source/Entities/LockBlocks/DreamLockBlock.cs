@@ -21,7 +21,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             private readonly DreamLockBlock parent;
 
             private const float unlockDuration = 0.25f;
-            private const float chargeUpDuration = 0.55f, chargeDownDuration = 0.1f;
+            private const float chargeUpDuration = 0.6f, chargeDownDuration = 0.1f;
 
             public DreamBlockDummy(Vector2 position, DreamLockBlock parent, bool below) : base(position, 32, 32, null, false, false, below)
             {
@@ -48,7 +48,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 whiteFill = 1f;
                 for (float p2 = 1f; p2 > 0f; p2 -= Engine.DeltaTime / unlockDuration)
                 {
-                    whiteHeight = Ease.CubeOut(p2);
+                    whiteHeight = p2;
                     Glitch.Value = p2 * 0.2f;
                     if (level.OnInterval(0.1f))
                     {
