@@ -7,7 +7,7 @@ entities.MoreLockBlocks/GlassLockBlock.attributes.description.unlock_sfx=The eve
 entities.MoreLockBlocks/GlassLockBlock.attributes.description.stepMusicProgress=Whether to increase the music progress on the current track by 1 after this lock block is unlocked.
 entities.MoreLockBlocks/GlassLockBlock.attributes.description.behindFgTiles=Whether this lock block will render behind foreground tiles.
 entities.MoreLockBlocks/GlassLockBlock.attributes.description.useVanillaKeys=Whether this lock block should be openable by vanilla keys.
-entities.MoreLockBlocks/GlassLockBlock.attributes.description.dzhakeHelperKeySettings=Describes which Dzhake Helper Custom Key groups (if any) this lock block is compatible with.\nLeft empty: this lock block is incompatible with Dzhake Helper keys.\n*: this lock block is openable by all Dzhake Helper keys.\nAny integer: this lock block is unlockable by a Dzhake Helper key with the specified Group. 
+entities.MoreLockBlocks/DreamLockBlock.attributes.description.dzhakeHelperKeySettings=Describes which Dzhake Helper Custom Key groups (if any) this lock block can be unlocked by.\nLeft empty: this lock block cannot be unlocked with Dzhake Helper keys.\n*: this lock block can be unlocked with any Dzhake Helper key.\nAny integer: this lock block can be unlocked with a Dzhake Helper key with the specified Group. 
 
 # Glass Lock Block Controller
 entities.MoreLockBlocks/GlassLockBlockController.placements.name.controller=Glass Lock Block Controller
@@ -19,3 +19,12 @@ entities.MoreLockBlocks/GlassLockBlockController.attributes.description.rayColor
 entities.MoreLockBlocks/GlassLockBlockController.attributes.description.wavy=Whether to render the wavy effect on Glass Lock Blocks affected by this controller.
 entities.MoreLockBlocks/GlassLockBlockController.attributes.description.vanillaEdgeBehavior=Whether to have the edges of Glass Lock Blocks affected by this controller display like vanilla glass block edges.
 entities.MoreLockBlocks/GlassLockBlockController.attributes.description.persistent=Whether this controller's effects should persist after leaving the room this controller is in.
+
+# Dream Lock Block
+entities.MoreLockBlocks/DreamLockBlock.placements.name.dreamLockBlock=Dream Lock Block
+entities.MoreLockBlocks/DreamLockBlock.attributes.description.spritePath=The path to use for the lock sprites. The images this path points to must be in the same format as the vanilla ones.
+entities.MoreLockBlocks/DreamLockBlock.attributes.description.unlock_sfx=The event that will play when the lock block is unlocked. Defaults to "event:/game/03_resort/key_unlock".
+entities.MoreLockBlocks/DreamLockBlock.attributes.description.stepMusicProgress=Whether to increase the music progress on the current track by 1 after this lock block is unlocked.
+entities.MoreLockBlocks/DreamLockBlock.attributes.description.below=Whether this lock block will render behind foreground tiles.
+entities.MoreLockBlocks/DreamLockBlock.attributes.description.useVanillaKeys=Whether this lock block should be openable by vanilla keys.
+entities.MoreLockBlocks/DreamLockBlock.attributes.description.dzhakeHelperKeySettings=Describes which Dzhake Helper Custom Key groups (if any) this lock block can be unlocked by.\nLeft empty: this lock block cannot be unlocked with Dzhake Helper keys.\n*: this lock block can be unlocked with any Dzhake Helper key.\nAny integer: this lock block can be unlocked with a Dzhake Helper key with the specified Group. 

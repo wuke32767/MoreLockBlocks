@@ -34,7 +34,6 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         public BaseLockBlock(EntityData data, Vector2 offset, EntityID id, string defaultSpriteID) : base(data.Position + offset, 32f, 32f, false)
         {
             ID = id;
-            SurfaceSoundIndex = 32;
             DisableLightsInside = false;
             Add(new PlayerCollider(OnPlayer, new Circle(60f, 16f, 16f)));
 
@@ -78,6 +77,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             return sprite;
         }
 
+        #region OnPlayer
+
         protected virtual void OnPlayer(Player player)
         {
             if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
@@ -91,7 +92,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void OnPlayer_DzhakeHelperLoaded(Player player)
+        protected virtual void OnPlayer_DzhakeHelperLoaded(Player player)
         {
             if (opening)
             {
@@ -113,7 +114,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void OnPlayer_DzhakeHelperUnloaded(Player player)
+        protected virtual void OnPlayer_DzhakeHelperUnloaded(Player player)
         {
             if (opening)
             {
@@ -129,6 +130,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             }
         }
 
+        #endregion
+        #region TryOpen
+
         protected virtual void TryOpen(Player player, Follower fol)
         {
             if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
@@ -142,7 +146,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void TryOpen_DzhakeHelperLoaded(Player player, Follower fol)
+        protected virtual void TryOpen_DzhakeHelperLoaded(Player player, Follower fol)
         {
             Collidable = false;
             if (!Scene.CollideCheck<Solid>(player.Center, Center))
@@ -162,7 +166,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void TryOpen_DzhakeHelperUnloaded(Player player, Follower fol)
+        protected virtual void TryOpen_DzhakeHelperUnloaded(Player player, Follower fol)
         {
             Collidable = false;
             if (!Scene.CollideCheck<Solid>(player.Center, Center))
@@ -177,6 +181,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             Collidable = true;
         }
 
+        #endregion
+        #region UnlockRoutine
+
         protected virtual IEnumerator UnlockRoutine(Follower fol)
         {
             if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
@@ -190,7 +197,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private IEnumerator UnlockRoutine_DzhakeHelperLoaded(Follower fol)
+        protected virtual IEnumerator UnlockRoutine_DzhakeHelperLoaded(Follower fol)
         {
             SoundEmitter emitter = SoundEmitter.Play(unlockSfxName, this);
             emitter.Source.DisposeOnTransition = true;
@@ -248,7 +255,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private IEnumerator UnlockRoutine_DzhakeHelperUnloaded(Follower fol)
+        protected virtual IEnumerator UnlockRoutine_DzhakeHelperUnloaded(Follower fol)
         {
             SoundEmitter emitter = SoundEmitter.Play(unlockSfxName, this);
             emitter.Source.DisposeOnTransition = true;
@@ -282,5 +289,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             RemoveSelf();
         }
+
+        #endregion
     }
 }

@@ -47,6 +47,7 @@ public class MoreLockBlocksModule : EverestModule
     {
         // TODO: apply any hooks that should always be active
         GlassLockBlockController.Load();
+        DreamLockBlock.DreamBlockDummy.Load();
 
         modRegisterHook = new Hook(typeof(Everest).GetMethod("Register"), typeof(MoreLockBlocksModule).GetMethod("Everest_Register", BindingFlags.NonPublic | BindingFlags.Instance), this);
     }
@@ -55,6 +56,7 @@ public class MoreLockBlocksModule : EverestModule
     {
         // TODO: unapply any hooks applied in Load()
         GlassLockBlockController.Unload();
+        DreamLockBlock.DreamBlockDummy.Unload();
 
         modRegisterHook?.Dispose();
         modRegisterHook = null;

@@ -27,7 +27,7 @@ glassLockBlock.fieldInformation = {
     }
 }
 
-local defaultLockTexture = "objects/MoreLockBlocks/glassLockBlock/lockdoor00"
+local defaultLockTexture = "objects/MoreLockBlocks/generic/lock00"
 local defaultBlockColor = { 13 / 255, 46 / 255, 137 / 255 }
 local defaultBlockBorderColor = { 1.0, 1.0, 1.0, 1.0 }
 local fallbackBlockColor = { 1.0, 1.0, 1.0, 0.6 }

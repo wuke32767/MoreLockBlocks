@@ -12,7 +12,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
     [CustomEntity("MoreLockBlocks/GlassLockBlock")]
     public class GlassLockBlock : BaseLockBlock
     {
-        private const string spriteID = "lockdoor_glass_lock";
+        private const string spriteID = "lockdoor_generic_lock";
 
         private readonly List<Rectangle?> frameMetadata = new();
         public Rectangle? RenderBounds
