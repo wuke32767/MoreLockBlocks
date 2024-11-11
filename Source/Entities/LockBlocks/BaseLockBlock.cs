@@ -31,7 +31,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         protected readonly string unlockSfxName;
 
-        public BaseLockBlock(EntityData data, Vector2 offset, EntityID id, string defaultSpriteID, string defaultUnlockSfx = "event:/game/03_resort/key_unlock") : base(data.Position + offset, 32f, 32f, false)
+        public BaseLockBlock(EntityData data, Vector2 offset, EntityID id, string defaultSpriteID = "MoreLockBlocks_generic_lock", string defaultUnlockSfx = "event:/game/03_resort/key_unlock") : base(data.Position + offset, 32f, 32f, false)
         {
             ID = id;
             DisableLightsInside = false;

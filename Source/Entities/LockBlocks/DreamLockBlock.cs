@@ -111,7 +111,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         private readonly bool dummyBelow;
 
-        public DreamLockBlock(EntityData data, Vector2 offset, EntityID id) : base(data, offset, id, "lockdoor_generic_lock", MoreLockBlocksSFX.game_lockblocks_dreamlockblock_key_unlock)
+        public DreamLockBlock(EntityData data, Vector2 offset, EntityID id) : base(data, offset, id, defaultUnlockSfx: MoreLockBlocksSFX.game_lockblocks_dreamlockblock_key_unlock)
         {
             SurfaceSoundIndex = 11;
             dummyBelow = data.Bool("below", false);
