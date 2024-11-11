@@ -79,7 +79,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         #region OnPlayer
 
-        protected virtual void OnPlayer(Player player)
+        protected void OnPlayer(Player player)
         {
             if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
             {
@@ -133,7 +133,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         #endregion
         #region TryOpen
 
-        protected virtual void TryOpen(Player player, Follower fol)
+        protected void TryOpen(Player player, Follower fol)
         {
             if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
             {
@@ -184,7 +184,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         #endregion
         #region UnlockRoutine
 
-        protected virtual IEnumerator UnlockRoutine(Follower fol)
+        protected IEnumerator UnlockRoutine(Follower fol)
         {
             if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
             {
