@@ -96,7 +96,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             {
                 if (block is DreamBlockDummy dummy)
                 {
-                    return dummy.parent.UnlockingRegistered || MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(dummy.parent.ID);
+                    return MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(dummy.parent.ID);
                 }
                 else
                 {
