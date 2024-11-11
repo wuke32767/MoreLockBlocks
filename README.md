@@ -22,4 +22,4 @@ All lock blocks have customizable lock sprites and unlock sounds, and are compat
 
 ## Feedback / bug reports / feature requests
 
-Please reach out to me (@aonkeeper4) in Celestecord if you have any feedback / bug reports / feature requests, however this is kind of a thing I made on a whim to see if I could so things might take a while. Basically the only reason I'm making the 1.0 release now is because uhh i got bored of waiting for ideass and i need more things im kinda proud of on my gb account
+Please reach out to me (@aonkeeper4) in Celestecord if you have any feedback / bug reports / feature requests, however this is kind of a thing I made on a whim so things might take a while.
