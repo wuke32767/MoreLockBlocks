@@ -63,7 +63,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                     Input.Rumble(RumbleStrength.Strong, RumbleLength.Short);
                     yield return null;
                 }
-                Glitch.Value = 0f;
+                whiteHeight = Glitch.Value = 0f;
                 while (whiteFill > 0f)
                 {
                     whiteFill -= Engine.DeltaTime / chargeDownDuration;
