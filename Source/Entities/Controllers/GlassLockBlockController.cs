@@ -97,6 +97,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
+
             List<MTexture> starTextures = GFX.Game.GetAtlasSubtextures("particles/stars/");
             for (int i = 0; i < stars.Length; i++)
             {
@@ -106,6 +107,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 stars[i].Color = Calc.Random.Choose(StarColors);
                 stars[i].Scroll = Vector2.One * Calc.Random.NextFloat(0.05f);
             }
+
             for (int k = 0; k < rays.Length; k++)
             {
                 rays[k].Position.X = Calc.Random.Next(320);
@@ -124,12 +126,15 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             {
                 return;
             }
+
             Camera camera = (Scene as Level).Camera;
             int screenWidth = GameplayBuffers.Gameplay.Width;
             int screenHeight = GameplayBuffers.Gameplay.Height;
+
             starsTarget ??= VirtualContent.CreateRenderTarget("MoreLockBlocks/glass-lock-block-surfaces", screenWidth, screenHeight);
             Engine.Graphics.GraphicsDevice.SetRenderTarget(starsTarget);
             Engine.Graphics.GraphicsDevice.Clear(Color.Transparent);
+
             Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
             Vector2 origin = new(8f, 8f);
             for (int i = 0; i < stars.Length; i++)
@@ -157,6 +162,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 }
             }
             Draw.SpriteBatch.End();
+
             int vertex = 0;
             for (int j = 0; j < rays.Length; j++)
             {
@@ -179,6 +185,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                     DrawRay(rayPosition - new Vector2(0f, screenHeight), ref vertex, ref rays[j]);
                 }
             }
+
             beamsTarget ??= VirtualContent.CreateRenderTarget("MoreLockBlocks/glass-lock-block-beams", screenWidth, screenHeight);
             Engine.Graphics.GraphicsDevice.SetRenderTarget(beamsTarget);
             Engine.Graphics.GraphicsDevice.Clear(Color.Transparent);
@@ -200,6 +207,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             Vector2 v3 = position + value2 + value3 + value4;
             Vector2 v4 = position - value2 + value3 + value4;
             Color color = ray.Color;
+
             Quad(ref vertex, v, vector, vector2, v2, Color.Transparent, color, color, Color.Transparent);
             Quad(ref vertex, vector, vector3, vector4, vector2, color, color, color, color);
             Quad(ref vertex, vector3, v3, v4, vector4, color, Color.Transparent, Color.Transparent, color);
@@ -236,6 +244,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             Vector2 position = (Scene as Level).Camera.Position;
             IEnumerable<GlassLockBlock> glassBlocks = GetGlassBlocksToAffect();
+
             foreach (GlassLockBlock block in glassBlocks)
             {
                 if (block.RenderBounds is Rectangle rb)
@@ -243,6 +252,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                     Draw.Rect(block.Center.X + rb.Left, block.Center.Y + rb.Top, rb.Width, rb.Height, BgColor);
                 }
             }
+
             if (starsTarget != null && !starsTarget.IsDisposed)
             {
                 foreach (GlassLockBlock block in glassBlocks)
@@ -254,6 +264,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                     }
                 }
             }
+
             if (beamsTarget != null && !beamsTarget.IsDisposed)
             {
                 foreach (GlassLockBlock block in glassBlocks)
@@ -420,6 +431,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 }
                 self.Add(new GlassLockBlockController(restoredData, Vector2.Zero));
             }
+
             orig(self, playerIntro, isFromLoader);
         }
 

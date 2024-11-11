@@ -31,24 +31,26 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             {
                 Level level = SceneAs<Level>();
                 Input.Rumble(RumbleStrength.Light, RumbleLength.Long);
-                Add(shaker = new Shaker(true, delegate (Vector2 t)
+                Add(shaker = new Shaker(true, delegate (Vector2 s)
                 {
-                    shake = t;
+                    shake = s;
                 }));
                 shaker.Interval = 0.02f;
-                for (float p2 = 0f; p2 < 1f; p2 += Engine.DeltaTime / chargeUpDuration)
+
+                for (float percent = 0f; percent < 1f; percent += Engine.DeltaTime / chargeUpDuration)
                 {
-                    whiteFill = Ease.CubeIn(p2);
+                    whiteFill = Ease.CubeIn(percent);
                     yield return null;
                 }
                 shaker.On = false;
                 ActivateNoRoutine();
+
                 whiteHeight = 1f;
                 whiteFill = 1f;
-                for (float p2 = 1f; p2 > 0f; p2 -= Engine.DeltaTime / unlockDuration)
+                for (float percent = 1f; percent > 0f; percent -= Engine.DeltaTime / unlockDuration)
                 {
-                    whiteHeight = p2;
-                    Glitch.Value = p2 * 0.2f;
+                    whiteHeight = percent;
+                    Glitch.Value = percent * 0.2f;
                     if (level.OnInterval(0.1f))
                     {
                         for (int i = 0; i < Width; i += 4)
@@ -64,6 +66,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                     yield return null;
                 }
                 whiteHeight = Glitch.Value = 0f;
+
                 while (whiteFill > 0f)
                 {
                     whiteFill -= Engine.DeltaTime / chargeDownDuration;
