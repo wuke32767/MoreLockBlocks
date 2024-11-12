@@ -134,16 +134,18 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             private static void DoNothingIfDummy(Action<DreamBlock> orig, DreamBlock self)
             {
-                if (self is not DreamBlockDummy)
+                if (self is DreamBlockDummy dummy && !MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(dummy.parent.ID))
+                    return;
+                else
                     orig(self);
             }
 
             private static IEnumerator DoNothingIfDummy(Func<DreamBlock, IEnumerator> orig, DreamBlock self)
             {
-                if (self is not DreamBlockDummy)
-                    yield return new SwapImmediately(orig(self));
-                else
+                if (self is DreamBlockDummy dummy && !MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(dummy.parent.ID))
                     yield break;
+                else
+                    yield return new SwapImmediately(orig(self));
             }
 
             #endregion
