@@ -197,7 +197,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
                 cursor.GotoNext(MoveType.After, instr => instr.MatchLdfld(typeof(PlayerInventory).GetField("DreamDash", BindingFlags.Instance | BindingFlags.Public)));
                 cursor.GotoNext(MoveType.Before, instr => instr.MatchBrfalse(out ILLabel _));
-                cursor.Emit(OpCodes.Ldarg_0);
+                cursor.Emit(OpCodes.Ldloc_1);
                 cursor.EmitCall(typeof(Vector2).GetProperty("UnitY", BindingFlags.Static | BindingFlags.Public).GetGetMethod());
                 cursor.EmitDelegate(DetermineInventoryCheckOverride);
                 cursor.Emit(OpCodes.Or);
