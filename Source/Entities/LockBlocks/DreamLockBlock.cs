@@ -24,7 +24,22 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             private const float chargeUpDuration = 0.6f, unlockDuration = 0.25f, chargeDownDuration = 0.1f;
 
-            private bool canDashThrough = false;
+            private bool CanDashThrough
+            {
+                get
+                {
+                    if (MoreLockBlocksModule.Session.DreamBlockDummyStates.TryGetValue(parent.ID, out bool value))
+                        return value;
+                    else
+                        return MoreLockBlocksModule.Session.DreamBlockDummyStates[parent.ID] = false;
+                }
+
+                set
+                {
+                    MoreLockBlocksModule.Session.DreamBlockDummyStates[parent.ID] = value;
+                }
+            }
+
             private bool Unlocked => MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(parent.ID); // whether we can change state
 
             private readonly bool ignoreInventory;
@@ -33,8 +48,6 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             {
                 this.parent = parent;
                 this.ignoreInventory = ignoreInventory;
-
-                canDashThrough = Unlocked;
             }
 
             public IEnumerator DummyUnlockRoutine()
@@ -123,7 +136,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             private static bool DetermineDreamBlockActive(bool orig, DreamBlock self)
             {
                 if (self is DreamBlockDummy dummy)
-                    return dummy.canDashThrough;
+                    return dummy.CanDashThrough;
                 else
                     return orig;
             }
@@ -140,7 +153,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             {
                 if (self is DreamBlockDummy dummy)
                 {
-                    dummy.canDashThrough = canDashThrough;
+                    dummy.CanDashThrough = canDashThrough;
                     if (!dummy.Unlocked)
                         return;
                 }
@@ -151,7 +164,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             {
                 if (self is DreamBlockDummy dummy)
                 {
-                    dummy.canDashThrough = canDashThrough;
+                    dummy.CanDashThrough = canDashThrough;
                     if (!dummy.Unlocked)
                         yield break;
                 }
@@ -172,7 +185,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             private static bool DetermineInventoryCheckOverride(Player player, Vector2 dir)
             {
-                return player.CollideFirst<DreamBlock>(player.Position + dir) is DreamBlockDummy dummy && dummy.canDashThrough && dummy.ignoreInventory;
+                return player.CollideFirst<DreamBlock>(player.Position + dir) is DreamBlockDummy dummy && dummy.CanDashThrough && dummy.ignoreInventory;
             }
 
             #endregion

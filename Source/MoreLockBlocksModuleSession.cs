@@ -19,4 +19,6 @@ public class MoreLockBlocksModuleSession : EverestModuleSession
     public GlassLockBlockState? GlassLockBlockCurrentSettings = null;
 
     public List<EntityID> UnlockedDreamLockBlocks = new();
+
+    public Dictionary<EntityID, bool> DreamBlockDummyStates = new();
 }
