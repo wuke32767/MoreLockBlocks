@@ -10,6 +10,7 @@ using Celeste.Mod.DzhakeHelper.Entities;
 using System.Runtime.CompilerServices;
 using System;
 using MonoMod.Utils;
+using MonoMod.RuntimeDetour;
 
 namespace Celeste.Mod.MoreLockBlocks.Entities
 {
@@ -43,6 +44,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             private bool Unlocked => MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(parent.ID); // whether we can change state
 
             private readonly bool ignoreInventory;
+
+            private static ILHook hook_Player_DashCoroutine;
 
             public DreamBlockDummy(Vector2 position, DreamLockBlock parent, bool below, bool ignoreInventory) : base(position, 32, 32, null, false, false, below)
             {
@@ -109,6 +112,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 On.Celeste.DreamBlock.DeactivateNoRoutine += DreamBlock_DeactivateNoRoutine;
 
                 IL.Celeste.Player.DreamDashCheck += Player_DreamDashCheck;
+
+                hook_Player_DashCoroutine = new ILHook(typeof(Player).GetMethod("DashCoroutine", BindingFlags.Instance | BindingFlags.NonPublic).GetStateMachineTarget(), Player_DashCoroutine);
             }
 
             public static void Unload()
@@ -122,6 +127,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 On.Celeste.DreamBlock.DeactivateNoRoutine -= DreamBlock_DeactivateNoRoutine;
 
                 IL.Celeste.Player.DreamDashCheck -= Player_DreamDashCheck;
+
+                hook_Player_DashCoroutine?.Dispose();
+                hook_Player_DashCoroutine = null;
             }
 
             private static void DreamBlock_Added(ILContext il)
@@ -179,6 +187,18 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 cursor.GotoNext(MoveType.Before, instr => instr.MatchBrfalse(out ILLabel _));
                 cursor.Emit(OpCodes.Ldarg_0);
                 cursor.Emit(OpCodes.Ldarg_1);
+                cursor.EmitDelegate(DetermineInventoryCheckOverride);
+                cursor.Emit(OpCodes.Or);
+            }
+
+            private static void Player_DashCoroutine(ILContext il)
+            {
+                ILCursor cursor = new(il);
+
+                cursor.GotoNext(MoveType.After, instr => instr.MatchLdfld(typeof(PlayerInventory).GetField("DreamDash", BindingFlags.Instance | BindingFlags.Public)));
+                cursor.GotoNext(MoveType.Before, instr => instr.MatchBrfalse(out ILLabel _));
+                cursor.Emit(OpCodes.Ldarg_0);
+                cursor.EmitCall(typeof(Vector2).GetProperty("UnitY", BindingFlags.Static | BindingFlags.Public).GetGetMethod());
                 cursor.EmitDelegate(DetermineInventoryCheckOverride);
                 cursor.Emit(OpCodes.Or);
             }
