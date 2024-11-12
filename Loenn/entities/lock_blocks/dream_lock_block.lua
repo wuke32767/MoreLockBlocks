@@ -17,6 +17,7 @@ dreamLockBlock.placements = {
             useVanillaKeys = true,
             dzhakeHelperKeySettings = "",
             below = false,
+            ignoreInventory = true,
         }
     }
 }

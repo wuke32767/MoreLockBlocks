@@ -24,9 +24,17 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             private const float chargeUpDuration = 0.6f, unlockDuration = 0.25f, chargeDownDuration = 0.1f;
 
-            public DreamBlockDummy(Vector2 position, DreamLockBlock parent, bool below) : base(position, 32, 32, null, false, false, below)
+            private bool canDashThrough = false;
+            private bool Unlocked => MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(parent.ID); // whether we can change state
+
+            private readonly bool ignoreInventory;
+
+            public DreamBlockDummy(Vector2 position, DreamLockBlock parent, bool below, bool ignoreInventory) : base(position, 32, 32, null, false, false, below)
             {
                 this.parent = parent;
+                this.ignoreInventory = ignoreInventory;
+
+                canDashThrough = Unlocked;
             }
 
             public IEnumerator DummyUnlockRoutine()
@@ -44,11 +52,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                     whiteFill = Ease.CubeIn(percent);
                     yield return null;
                 }
-                // 
-                shaker.On = false;
-                playerHasDreamDash = true;
-                Setup();
-                Remove(occlude);
+                ActivateNoRoutine(); // we can do this because the block is already registered as unlocked
 
                 whiteHeight = 1f;
                 whiteFill = 1f;
@@ -90,6 +94,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 On.Celeste.DreamBlock.Deactivate += DreamBlock_Deactivate;
                 On.Celeste.DreamBlock.FastDeactivate += DreamBlock_FastDeactivate;
                 On.Celeste.DreamBlock.DeactivateNoRoutine += DreamBlock_DeactivateNoRoutine;
+
+                IL.Celeste.Player.DreamDashCheck += Player_DreamDashCheck;
             }
 
             public static void Unload()
@@ -101,6 +107,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 On.Celeste.DreamBlock.Deactivate -= DreamBlock_Deactivate;
                 On.Celeste.DreamBlock.FastDeactivate -= DreamBlock_FastDeactivate;
                 On.Celeste.DreamBlock.DeactivateNoRoutine -= DreamBlock_DeactivateNoRoutine;
+
+                IL.Celeste.Player.DreamDashCheck -= Player_DreamDashCheck;
             }
 
             private static void DreamBlock_Added(ILContext il)
@@ -115,37 +123,56 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             private static bool DetermineDreamBlockActive(bool orig, DreamBlock self)
             {
                 if (self is DreamBlockDummy dummy)
-                {
-                    return MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(dummy.parent.ID);
-                }
+                    return dummy.canDashThrough;
                 else
-                {
                     return orig;
+            }
+
+            private static IEnumerator DreamBlock_Activate(On.Celeste.DreamBlock.orig_Activate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, true);
+            private static IEnumerator DreamBlock_FastActivate(On.Celeste.DreamBlock.orig_FastActivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, true);
+            private static void DreamBlock_ActivateNoRoutine(On.Celeste.DreamBlock.orig_ActivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, true);
+
+            private static IEnumerator DreamBlock_Deactivate(On.Celeste.DreamBlock.orig_Deactivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, false);
+            private static IEnumerator DreamBlock_FastDeactivate(On.Celeste.DreamBlock.orig_FastDeactivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, false);
+            private static void DreamBlock_DeactivateNoRoutine(On.Celeste.DreamBlock.orig_DeactivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, false);
+
+            private static void DoNothingIfDummy(Action<DreamBlock> orig, DreamBlock self, bool canDashThrough)
+            {
+                if (self is DreamBlockDummy dummy)
+                {
+                    dummy.canDashThrough = canDashThrough;
+                    if (!dummy.Unlocked)
+                        return;
                 }
+                orig(self);
             }
 
-            private static IEnumerator DreamBlock_Activate(On.Celeste.DreamBlock.orig_Activate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
-            private static IEnumerator DreamBlock_FastActivate(On.Celeste.DreamBlock.orig_FastActivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
-            private static void DreamBlock_ActivateNoRoutine(On.Celeste.DreamBlock.orig_ActivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
-
-            private static IEnumerator DreamBlock_Deactivate(On.Celeste.DreamBlock.orig_Deactivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
-            private static IEnumerator DreamBlock_FastDeactivate(On.Celeste.DreamBlock.orig_FastDeactivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
-            private static void DreamBlock_DeactivateNoRoutine(On.Celeste.DreamBlock.orig_DeactivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
-
-            private static void DoNothingIfDummy(Action<DreamBlock> orig, DreamBlock self)
+            private static IEnumerator DoNothingIfDummy(Func<DreamBlock, IEnumerator> orig, DreamBlock self, bool canDashThrough)
             {
-                if (self is DreamBlockDummy dummy && !MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(dummy.parent.ID))
-                    return;
-                else
-                    orig(self);
+                if (self is DreamBlockDummy dummy)
+                {
+                    dummy.canDashThrough = canDashThrough;
+                    if (!dummy.Unlocked)
+                        yield break;
+                }
+                yield return new SwapImmediately(orig(self));
             }
 
-            private static IEnumerator DoNothingIfDummy(Func<DreamBlock, IEnumerator> orig, DreamBlock self)
+            private static void Player_DreamDashCheck(ILContext il)
             {
-                if (self is DreamBlockDummy dummy && !MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(dummy.parent.ID))
-                    yield break;
-                else
-                    yield return new SwapImmediately(orig(self));
+                ILCursor cursor = new(il);
+
+                cursor.GotoNext(MoveType.After, instr => instr.MatchLdfld(typeof(PlayerInventory).GetField("DreamDash", BindingFlags.Instance | BindingFlags.Public)));
+                cursor.GotoNext(MoveType.Before, instr => instr.MatchBrfalse(out ILLabel _));
+                cursor.Emit(OpCodes.Ldarg_0);
+                cursor.Emit(OpCodes.Ldarg_1);
+                cursor.EmitDelegate(DetermineInventoryCheckOverride);
+                cursor.Emit(OpCodes.Or);
+            }
+
+            private static bool DetermineInventoryCheckOverride(Player player, Vector2 dir)
+            {
+                return player.CollideFirst<DreamBlock>(player.Position + dir) is DreamBlockDummy dummy && dummy.canDashThrough && dummy.ignoreInventory;
             }
 
             #endregion
@@ -155,17 +182,20 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         private readonly bool dummyBelow;
 
+        private readonly bool dummyIgnoreInventory;
+
         public DreamLockBlock(EntityData data, Vector2 offset, EntityID id) : base(data, offset, id, defaultUnlockSfx: MoreLockBlocksSFX.game_lockblocks_dreamlockblock_key_unlock)
         {
             SurfaceSoundIndex = 11;
             dummyBelow = data.Bool("below", false);
+            dummyIgnoreInventory = data.Bool("ignoreInventory", false);
         }
 
         public override void Added(Scene scene)
         {
             base.Added(scene);
 
-            Scene.Add(dummy = new DreamBlockDummy(Position, this, dummyBelow));
+            Scene.Add(dummy = new DreamBlockDummy(Position, this, dummyBelow, dummyIgnoreInventory));
             Depth = dummy.Depth - 1;
             if (MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(ID))
             {
