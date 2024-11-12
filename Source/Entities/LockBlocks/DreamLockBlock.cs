@@ -8,6 +8,8 @@ using Mono.Cecil.Cil;
 using Celeste.Mod.DzhakeHelper;
 using Celeste.Mod.DzhakeHelper.Entities;
 using System.Runtime.CompilerServices;
+using System;
+using MonoMod.Utils;
 
 namespace Celeste.Mod.MoreLockBlocks.Entities
 {
@@ -42,8 +44,11 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                     whiteFill = Ease.CubeIn(percent);
                     yield return null;
                 }
+                // 
                 shaker.On = false;
-                ActivateNoRoutine();
+                playerHasDreamDash = true;
+                Setup();
+                Remove(occlude);
 
                 whiteHeight = 1f;
                 whiteFill = 1f;
@@ -79,11 +84,23 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             public static void Load()
             {
                 IL.Celeste.DreamBlock.Added += DreamBlock_Added;
+                On.Celeste.DreamBlock.Activate += DreamBlock_Activate;
+                On.Celeste.DreamBlock.FastActivate += DreamBlock_FastActivate;
+                On.Celeste.DreamBlock.ActivateNoRoutine += DreamBlock_ActivateNoRoutine;
+                On.Celeste.DreamBlock.Deactivate += DreamBlock_Deactivate;
+                On.Celeste.DreamBlock.FastDeactivate += DreamBlock_FastDeactivate;
+                On.Celeste.DreamBlock.DeactivateNoRoutine += DreamBlock_DeactivateNoRoutine;
             }
 
             public static void Unload()
             {
                 IL.Celeste.DreamBlock.Added -= DreamBlock_Added;
+                On.Celeste.DreamBlock.Activate -= DreamBlock_Activate;
+                On.Celeste.DreamBlock.FastActivate -= DreamBlock_FastActivate;
+                On.Celeste.DreamBlock.ActivateNoRoutine -= DreamBlock_ActivateNoRoutine;
+                On.Celeste.DreamBlock.Deactivate -= DreamBlock_Deactivate;
+                On.Celeste.DreamBlock.FastDeactivate -= DreamBlock_FastDeactivate;
+                On.Celeste.DreamBlock.DeactivateNoRoutine -= DreamBlock_DeactivateNoRoutine;
             }
 
             private static void DreamBlock_Added(ILContext il)
@@ -95,9 +112,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 cursor.EmitDelegate(DetermineDreamBlockActive);
             }
 
-            private static bool DetermineDreamBlockActive(bool orig, DreamBlock block)
+            private static bool DetermineDreamBlockActive(bool orig, DreamBlock self)
             {
-                if (block is DreamBlockDummy dummy)
+                if (self is DreamBlockDummy dummy)
                 {
                     return MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(dummy.parent.ID);
                 }
@@ -105,6 +122,28 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 {
                     return orig;
                 }
+            }
+
+            private static IEnumerator DreamBlock_Activate(On.Celeste.DreamBlock.orig_Activate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
+            private static IEnumerator DreamBlock_FastActivate(On.Celeste.DreamBlock.orig_FastActivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
+            private static void DreamBlock_ActivateNoRoutine(On.Celeste.DreamBlock.orig_ActivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
+
+            private static IEnumerator DreamBlock_Deactivate(On.Celeste.DreamBlock.orig_Deactivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
+            private static IEnumerator DreamBlock_FastDeactivate(On.Celeste.DreamBlock.orig_FastDeactivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
+            private static void DreamBlock_DeactivateNoRoutine(On.Celeste.DreamBlock.orig_DeactivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self);
+
+            private static void DoNothingIfDummy(Action<DreamBlock> orig, DreamBlock self)
+            {
+                if (self is not DreamBlockDummy)
+                    orig(self);
+            }
+
+            private static IEnumerator DoNothingIfDummy(Func<DreamBlock, IEnumerator> orig, DreamBlock self)
+            {
+                if (self is not DreamBlockDummy)
+                    yield return new SwapImmediately(orig(self));
+                else
+                    yield break;
             }
 
             #endregion
