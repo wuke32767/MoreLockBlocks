@@ -41,19 +41,15 @@ public class MoreLockBlocksModule : EverestModule
     private void HookMods()
     {
         if (!DzhakeHelperLoaded && Everest.Loader.DependencyLoaded(new EverestModuleMetadata { Name = "DzhakeHelper", Version = new Version(1, 4, 9) }))
-        {
             LoadDzhakeHelper();
-        }
+
         if (!ReverseHelperLoaded && Everest.Loader.DependencyLoaded(new EverestModuleMetadata { Name = "ReverseHelper", Version = new Version(1, 15, 0) }))
-        {
             LoadReverseHelper();
-        }
     }
 
     public override void Load()
     {
         // TODO: apply any hooks that should always be active
-        typeof(ReverseHelper).ModInterop();
         GlassLockBlockController.Load();
         DreamLockBlock.DreamBlockDummy.Load();
 
@@ -86,21 +82,14 @@ public class MoreLockBlocksModule : EverestModule
         HookMods();
     }
 
-    private void LoadDzhakeHelper()
-    {
-        DzhakeHelperLoaded = true;
-    }
-
-    private void UnloadDzhakeHelper()
-    {
-        DzhakeHelperLoaded = false;
-    }
+    private void LoadDzhakeHelper() => DzhakeHelperLoaded = true;
+    private void UnloadDzhakeHelper() => DzhakeHelperLoaded = false;
 
     private void LoadReverseHelper()
     {
+        typeof(ReverseHelper).ModInterop();
         ReverseHelperLoaded = true;
     }
-
     private void UnloadReverseHelper()
     {
         ReverseHelperLoaded = false;
@@ -113,7 +102,7 @@ public class MoreLockBlocksModule : EverestModule
         if ((bool)Everest__ContentLoaded.GetValue(null))
         {
             // the game was already initialized and a new mod was loaded at runtime:
-            // make sure whe applied all mod hooks we want to apply.
+            // make sure we applied all mod hooks we want to apply.
             HookMods();
         }
     }
