@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using Celeste.Mod.MoreLockBlocks.Entities;
+using Celeste.Mod.MoreLockBlocks.Imports;
+using MonoMod.ModInterop;
 using MonoMod.RuntimeDetour;
 
 namespace Celeste.Mod.MoreLockBlocks;
@@ -22,6 +24,7 @@ public class MoreLockBlocksModule : EverestModule
     private static Hook modRegisterHook = null;
 
     internal bool DzhakeHelperLoaded;
+    internal bool ReverseHelperLoaded;
 
     public MoreLockBlocksModule()
     {
@@ -41,11 +44,16 @@ public class MoreLockBlocksModule : EverestModule
         {
             LoadDzhakeHelper();
         }
+        if (!ReverseHelperLoaded && Everest.Loader.DependencyLoaded(new EverestModuleMetadata { Name = "ReverseHelper", Version = new Version(1, 15, 0) }))
+        {
+            LoadReverseHelper();
+        }
     }
 
     public override void Load()
     {
         // TODO: apply any hooks that should always be active
+        typeof(ReverseHelper).ModInterop();
         GlassLockBlockController.Load();
         DreamLockBlock.DreamBlockDummy.Load();
 
@@ -65,6 +73,10 @@ public class MoreLockBlocksModule : EverestModule
         {
             UnloadDzhakeHelper();
         }
+        if (ReverseHelperLoaded)
+        {
+            UnloadReverseHelper();
+        }
     }
 
     public override void LoadContent(bool firstLoad)
@@ -82,6 +94,15 @@ public class MoreLockBlocksModule : EverestModule
     private void UnloadDzhakeHelper()
     {
         DzhakeHelperLoaded = false;
+    }
+    private void LoadReverseHelper()
+    {
+        ReverseHelperLoaded = true;
+    }
+
+    private void UnloadReverseHelper()
+    {
+        ReverseHelperLoaded = false;
     }
 
     private void Everest_Register(Action<EverestModule> orig, EverestModule module)

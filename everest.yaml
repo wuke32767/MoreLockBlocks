@@ -7,3 +7,5 @@
   OptionalDependencies:
     - Name: DzhakeHelper
       Version: 1.4.9
+    - Name: ReverseHelper
+      Version: 1.15.1
