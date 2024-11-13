@@ -21,6 +21,7 @@ namespace Celeste.Mod.MoreLockBlocks.Imports
         {
             ReverseHelper.RegisterDreamBlockLike?.Invoke(targetType, ActivateNoRoutine, DeactivateNoRoutine);
         }
+
         /// <summary> 
         /// or, use this to check if your entity is enabled.
         /// notice that because of awake order, your entity might awake before reversed.
@@ -36,6 +37,7 @@ namespace Celeste.Mod.MoreLockBlocks.Imports
             }
             return ReverseHelper.PlayerHasDreamDash(e);
         }
+
         /// <summary>
         /// generic version of these options.
         /// https://github.com/wuke32767/CelesteReverseHelper/blob/a4919894497bc501be7f9f8f5c08923a1187af1c/Src/Entities/DreamBlock/DreamBlockConfigurer.cs#L15
@@ -51,6 +53,7 @@ namespace Celeste.Mod.MoreLockBlocks.Imports
         {
             return ReverseHelper.ConfigureGetFromEnum?.Invoke(e, i);
         }
+
         /// <summary>
         /// generic version of these option.
         /// setter.
@@ -60,6 +63,7 @@ namespace Celeste.Mod.MoreLockBlocks.Imports
         {
             ReverseHelper.ConfigureSetFromEnum?.Invoke(e, i, value);
         }
+
         /// <summary>
         /// get option from string.
         /// </summary>
@@ -69,6 +73,7 @@ namespace Celeste.Mod.MoreLockBlocks.Imports
         {
             return ReverseHelper.ConfigureGetEnum?.Invoke(s) ?? 0;
         }
+
         /// <summary>
         /// returns trackers for these flags.
         /// </summary>

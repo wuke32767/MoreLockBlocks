@@ -20,8 +20,8 @@ public class MoreLockBlocksModule : EverestModule
     public override Type SaveDataType => typeof(MoreLockBlocksModuleSaveData);
     public static MoreLockBlocksModuleSaveData SaveData => (MoreLockBlocksModuleSaveData)Instance._SaveData;
 
-    private static readonly FieldInfo contentLoaded = typeof(Everest).GetField("_ContentLoaded", BindingFlags.NonPublic | BindingFlags.Static);
-    private static Hook modRegisterHook = null;
+    private static readonly FieldInfo Everest__ContentLoaded = typeof(Everest).GetField("_ContentLoaded", BindingFlags.NonPublic | BindingFlags.Static);
+    private static Hook hook_Everest_Register = null;
 
     internal bool DzhakeHelperLoaded;
     internal bool ReverseHelperLoaded;
@@ -57,7 +57,7 @@ public class MoreLockBlocksModule : EverestModule
         GlassLockBlockController.Load();
         DreamLockBlock.DreamBlockDummy.Load();
 
-        modRegisterHook = new Hook(typeof(Everest).GetMethod("Register"), typeof(MoreLockBlocksModule).GetMethod("Everest_Register", BindingFlags.NonPublic | BindingFlags.Instance), this);
+        hook_Everest_Register = new Hook(typeof(Everest).GetMethod("Register"), typeof(MoreLockBlocksModule).GetMethod("Everest_Register", BindingFlags.NonPublic | BindingFlags.Instance), this);
     }
 
     public override void Unload()
@@ -66,8 +66,8 @@ public class MoreLockBlocksModule : EverestModule
         GlassLockBlockController.Unload();
         DreamLockBlock.DreamBlockDummy.Unload();
 
-        modRegisterHook?.Dispose();
-        modRegisterHook = null;
+        hook_Everest_Register?.Dispose();
+        hook_Everest_Register = null;
 
         if (DzhakeHelperLoaded)
         {
@@ -95,6 +95,7 @@ public class MoreLockBlocksModule : EverestModule
     {
         DzhakeHelperLoaded = false;
     }
+
     private void LoadReverseHelper()
     {
         ReverseHelperLoaded = true;
@@ -109,7 +110,7 @@ public class MoreLockBlocksModule : EverestModule
     {
         orig(module);
 
-        if ((bool)contentLoaded.GetValue(null))
+        if ((bool)Everest__ContentLoaded.GetValue(null))
         {
             // the game was already initialized and a new mod was loaded at runtime:
             // make sure whe applied all mod hooks we want to apply.

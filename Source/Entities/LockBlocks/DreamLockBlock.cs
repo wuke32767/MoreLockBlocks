@@ -32,13 +32,30 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                     if (MoreLockBlocksModule.Session.DreamBlockDummyStates.TryGetValue(parent.ID, out bool value))
                         return value;
                     else
-                        return MoreLockBlocksModule.Session.DreamBlockDummyStates[parent.ID] = false;
+                    {
+                        bool state = MoreLockBlocksModule.Session.DreamBlockDummyStates[parent.ID] = false;
+                        if (ignoreInventory)
+                        {
+                            SetReverseHelperDummyState(state);
+                        }
+                        return state;
+                    }
                 }
 
                 set
                 {
                     MoreLockBlocksModule.Session.DreamBlockDummyStates[parent.ID] = value;
+                    if (ignoreInventory)
+                    {
+                        SetReverseHelperDummyState(value);
+                    }
                 }
+            }
+
+            private void SetReverseHelperDummyState(bool value)
+            {
+                Imports.ReverseHelperCall.ConfigureSetFromEnum(this, /*alwaysEnable =*/ 1 << 1, value);
+                Imports.ReverseHelperCall.ConfigureSetFromEnum(this, /*alwaysDisable =*/ 1 << 2, !value);
             }
 
             private bool Unlocked => MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(parent.ID); // whether we can change state
@@ -110,7 +127,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 On.Celeste.DreamBlock.Deactivate += DreamBlock_Deactivate;
                 On.Celeste.DreamBlock.FastDeactivate += DreamBlock_FastDeactivate;
                 On.Celeste.DreamBlock.DeactivateNoRoutine += DreamBlock_DeactivateNoRoutine;
-                if (MoreLockBlocksModule.Instance.ReverseHelperLoaded)
+
+                if (!MoreLockBlocksModule.Instance.ReverseHelperLoaded)
                 {
                     IL.Celeste.Player.DreamDashCheck += Player_DreamDashCheck;
 
@@ -128,7 +146,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 On.Celeste.DreamBlock.FastDeactivate -= DreamBlock_FastDeactivate;
                 On.Celeste.DreamBlock.DeactivateNoRoutine -= DreamBlock_DeactivateNoRoutine;
 
-                if (MoreLockBlocksModule.Instance.ReverseHelperLoaded)
+                if (!MoreLockBlocksModule.Instance.ReverseHelperLoaded)
                 {
                     IL.Celeste.Player.DreamDashCheck -= Player_DreamDashCheck;
 
@@ -150,60 +168,51 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             {
                 if (self is DreamBlockDummy dummy)
                 {
+                    bool canDashThrough = dummy.CanDashThrough;
                     if (dummy.ignoreInventory)
                     {
-                        Imports.ReverseHelperCall.ConfigureSetFromEnum(dummy, /*alwaysEnable =*/ 1 << 1, dummy.Unlocked);
+                        dummy.SetReverseHelperDummyState(canDashThrough);
                     }
-
-                    return dummy.CanDashThrough;
+                    return canDashThrough;
                 }
                 else
                     return orig;
             }
 
-            private static IEnumerator DreamBlock_Activate(On.Celeste.DreamBlock.orig_Activate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, true);
-            private static IEnumerator DreamBlock_FastActivate(On.Celeste.DreamBlock.orig_FastActivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, true);
-            private static void DreamBlock_ActivateNoRoutine(On.Celeste.DreamBlock.orig_ActivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, true);
+            private static IEnumerator DreamBlock_Activate(On.Celeste.DreamBlock.orig_Activate orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, true);
+            private static IEnumerator DreamBlock_FastActivate(On.Celeste.DreamBlock.orig_FastActivate orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, true);
+            private static void DreamBlock_ActivateNoRoutine(On.Celeste.DreamBlock.orig_ActivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, true);
 
-            private static IEnumerator DreamBlock_Deactivate(On.Celeste.DreamBlock.orig_Deactivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, false);
-            private static IEnumerator DreamBlock_FastDeactivate(On.Celeste.DreamBlock.orig_FastDeactivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, false);
-            private static void DreamBlock_DeactivateNoRoutine(On.Celeste.DreamBlock.orig_DeactivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, false);
+            private static IEnumerator DreamBlock_Deactivate(On.Celeste.DreamBlock.orig_Deactivate orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, false);
+            private static IEnumerator DreamBlock_FastDeactivate(On.Celeste.DreamBlock.orig_FastDeactivate orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, false);
+            private static void DreamBlock_DeactivateNoRoutine(On.Celeste.DreamBlock.orig_DeactivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, false);
 
-            private static void DoNothingIfDummy(Action<DreamBlock> orig, DreamBlock self, bool canDashThrough)
+            private static void DoNothingIfDummy(Action callOrig, DreamBlock self, bool canDashThrough)
             {
                 if (self is DreamBlockDummy dummy)
                 {
-                    dummy.CanDashThrough = canDashThrough;
-                    bool unlocked = dummy.Unlocked;
-                    if (dummy.ignoreInventory)
+                    if (dummy.Unlocked)
                     {
-                        Imports.ReverseHelperCall.ConfigureSetFromEnum(dummy, /*alwaysEnable =*/ 1 << 1, unlocked);
+                        dummy.CanDashThrough = canDashThrough;
                     }
-
-                    if (!unlocked)
-                    {
+                    else
                         return;
-                    }
                 }
-                orig(self);
+                callOrig();
             }
 
-            private static IEnumerator DoNothingIfDummy(Func<DreamBlock, IEnumerator> orig, DreamBlock self, bool canDashThrough)
+            private static IEnumerator DoNothingIfDummy(Func<IEnumerator> callOrig, DreamBlock self, bool canDashThrough)
             {
                 if (self is DreamBlockDummy dummy)
                 {
-                    dummy.CanDashThrough = canDashThrough;
-                    bool unlocked = dummy.Unlocked;
-                    if (dummy.ignoreInventory)
+                    if (dummy.Unlocked)
                     {
-                        Imports.ReverseHelperCall.ConfigureSetFromEnum(dummy, /*alwaysEnable =*/ 1 << 1, unlocked);
+                        dummy.CanDashThrough = canDashThrough;
                     }
-                    if (!unlocked)
-                    {
+                    else
                         yield break;
-                    }
                 }
-                yield return new SwapImmediately(orig(self));
+                yield return new SwapImmediately(callOrig());
             }
 
             private static void Player_DreamDashCheck(ILContext il)
@@ -256,22 +265,13 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             base.Added(scene);
 
             Scene.Add(dummy = new DreamBlockDummy(Position, this, dummyBelow, dummyIgnoreInventory));
-            Imports.ReverseHelperCall.ConfigureSetFromEnum(dummy, /*alwaysDisable = */1 << 2, true);
             Depth = dummy.Depth - 1;
             if (MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(ID))
             {
                 RemoveSelf();
             }
         }
-        public override void Removed(Scene scene)
-        {
-            base.Removed(scene);
-            if (dummy.Scene is not null)//not removed
-            {
-                Imports.ReverseHelperCall.ConfigureSetFromEnum(dummy, /*alwaysDisable = */1 << 2, false);
 
-            }
-        }
         #region TryOpen
 
         [MethodImpl(MethodImplOptions.NoInlining)]
