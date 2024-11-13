@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using Celeste.Mod.MoreLockBlocks.Entities;
+using Celeste.Mod.MoreLockBlocks.Imports;
+using MonoMod.ModInterop;
 using MonoMod.RuntimeDetour;
 
 namespace Celeste.Mod.MoreLockBlocks;
@@ -18,10 +20,11 @@ public class MoreLockBlocksModule : EverestModule
     public override Type SaveDataType => typeof(MoreLockBlocksModuleSaveData);
     public static MoreLockBlocksModuleSaveData SaveData => (MoreLockBlocksModuleSaveData)Instance._SaveData;
 
-    private static readonly FieldInfo contentLoaded = typeof(Everest).GetField("_ContentLoaded", BindingFlags.NonPublic | BindingFlags.Static);
-    private static Hook modRegisterHook = null;
+    private static readonly FieldInfo Everest__ContentLoaded = typeof(Everest).GetField("_ContentLoaded", BindingFlags.NonPublic | BindingFlags.Static);
+    private static Hook hook_Everest_Register = null;
 
     internal bool DzhakeHelperLoaded;
+    internal bool ReverseHelperLoaded;
 
     public MoreLockBlocksModule()
     {
@@ -41,15 +44,20 @@ public class MoreLockBlocksModule : EverestModule
         {
             LoadDzhakeHelper();
         }
+        if (!ReverseHelperLoaded && Everest.Loader.DependencyLoaded(new EverestModuleMetadata { Name = "ReverseHelper", Version = new Version(1, 15, 0) }))
+        {
+            LoadReverseHelper();
+        }
     }
 
     public override void Load()
     {
         // TODO: apply any hooks that should always be active
+        typeof(ReverseHelper).ModInterop();
         GlassLockBlockController.Load();
         DreamLockBlock.DreamBlockDummy.Load();
 
-        modRegisterHook = new Hook(typeof(Everest).GetMethod("Register"), typeof(MoreLockBlocksModule).GetMethod("Everest_Register", BindingFlags.NonPublic | BindingFlags.Instance), this);
+        hook_Everest_Register = new Hook(typeof(Everest).GetMethod("Register"), typeof(MoreLockBlocksModule).GetMethod("Everest_Register", BindingFlags.NonPublic | BindingFlags.Instance), this);
     }
 
     public override void Unload()
@@ -58,12 +66,16 @@ public class MoreLockBlocksModule : EverestModule
         GlassLockBlockController.Unload();
         DreamLockBlock.DreamBlockDummy.Unload();
 
-        modRegisterHook?.Dispose();
-        modRegisterHook = null;
+        hook_Everest_Register?.Dispose();
+        hook_Everest_Register = null;
 
         if (DzhakeHelperLoaded)
         {
             UnloadDzhakeHelper();
+        }
+        if (ReverseHelperLoaded)
+        {
+            UnloadReverseHelper();
         }
     }
 
@@ -84,11 +96,21 @@ public class MoreLockBlocksModule : EverestModule
         DzhakeHelperLoaded = false;
     }
 
+    private void LoadReverseHelper()
+    {
+        ReverseHelperLoaded = true;
+    }
+
+    private void UnloadReverseHelper()
+    {
+        ReverseHelperLoaded = false;
+    }
+
     private void Everest_Register(Action<EverestModule> orig, EverestModule module)
     {
         orig(module);
 
-        if ((bool)contentLoaded.GetValue(null))
+        if ((bool)Everest__ContentLoaded.GetValue(null))
         {
             // the game was already initialized and a new mod was loaded at runtime:
             // make sure whe applied all mod hooks we want to apply.

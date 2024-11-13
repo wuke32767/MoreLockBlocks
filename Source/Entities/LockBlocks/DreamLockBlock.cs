@@ -32,13 +32,30 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                     if (MoreLockBlocksModule.Session.DreamBlockDummyStates.TryGetValue(parent.ID, out bool value))
                         return value;
                     else
-                        return MoreLockBlocksModule.Session.DreamBlockDummyStates[parent.ID] = false;
+                    {
+                        bool state = MoreLockBlocksModule.Session.DreamBlockDummyStates[parent.ID] = false;
+                        if (ignoreInventory)
+                        {
+                            SetReverseHelperDummyState(state);
+                        }
+                        return state;
+                    }
                 }
 
                 set
                 {
                     MoreLockBlocksModule.Session.DreamBlockDummyStates[parent.ID] = value;
+                    if (ignoreInventory)
+                    {
+                        SetReverseHelperDummyState(value);
+                    }
                 }
+            }
+
+            private void SetReverseHelperDummyState(bool value)
+            {
+                Imports.ReverseHelperCall.ConfigureSetFromEnum(this, /*alwaysEnable =*/ 1 << 1, value);
+                Imports.ReverseHelperCall.ConfigureSetFromEnum(this, /*alwaysDisable =*/ 1 << 2, !value);
             }
 
             private bool Unlocked => MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(parent.ID); // whether we can change state
@@ -111,9 +128,12 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 On.Celeste.DreamBlock.FastDeactivate += DreamBlock_FastDeactivate;
                 On.Celeste.DreamBlock.DeactivateNoRoutine += DreamBlock_DeactivateNoRoutine;
 
-                IL.Celeste.Player.DreamDashCheck += Player_DreamDashCheck;
+                if (!MoreLockBlocksModule.Instance.ReverseHelperLoaded)
+                {
+                    IL.Celeste.Player.DreamDashCheck += Player_DreamDashCheck;
 
-                hook_Player_DashCoroutine = new ILHook(typeof(Player).GetMethod("DashCoroutine", BindingFlags.Instance | BindingFlags.NonPublic).GetStateMachineTarget(), Player_DashCoroutine);
+                    hook_Player_DashCoroutine = new ILHook(typeof(Player).GetMethod("DashCoroutine", BindingFlags.Instance | BindingFlags.NonPublic).GetStateMachineTarget(), Player_DashCoroutine);
+                }
             }
 
             public static void Unload()
@@ -126,10 +146,13 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 On.Celeste.DreamBlock.FastDeactivate -= DreamBlock_FastDeactivate;
                 On.Celeste.DreamBlock.DeactivateNoRoutine -= DreamBlock_DeactivateNoRoutine;
 
-                IL.Celeste.Player.DreamDashCheck -= Player_DreamDashCheck;
+                if (!MoreLockBlocksModule.Instance.ReverseHelperLoaded)
+                {
+                    IL.Celeste.Player.DreamDashCheck -= Player_DreamDashCheck;
 
-                hook_Player_DashCoroutine?.Dispose();
-                hook_Player_DashCoroutine = null;
+                    hook_Player_DashCoroutine?.Dispose();
+                    hook_Player_DashCoroutine = null;
+                }
             }
 
             private static void DreamBlock_Added(ILContext il)
@@ -144,39 +167,52 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             private static bool DetermineDreamBlockActive(bool orig, DreamBlock self)
             {
                 if (self is DreamBlockDummy dummy)
-                    return dummy.CanDashThrough;
+                {
+                    bool canDashThrough = dummy.CanDashThrough;
+                    if (dummy.ignoreInventory)
+                    {
+                        dummy.SetReverseHelperDummyState(canDashThrough);
+                    }
+                    return canDashThrough;
+                }
                 else
                     return orig;
             }
 
-            private static IEnumerator DreamBlock_Activate(On.Celeste.DreamBlock.orig_Activate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, true);
-            private static IEnumerator DreamBlock_FastActivate(On.Celeste.DreamBlock.orig_FastActivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, true);
-            private static void DreamBlock_ActivateNoRoutine(On.Celeste.DreamBlock.orig_ActivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, true);
+            private static IEnumerator DreamBlock_Activate(On.Celeste.DreamBlock.orig_Activate orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, true);
+            private static IEnumerator DreamBlock_FastActivate(On.Celeste.DreamBlock.orig_FastActivate orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, true);
+            private static void DreamBlock_ActivateNoRoutine(On.Celeste.DreamBlock.orig_ActivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, true);
 
-            private static IEnumerator DreamBlock_Deactivate(On.Celeste.DreamBlock.orig_Deactivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, false);
-            private static IEnumerator DreamBlock_FastDeactivate(On.Celeste.DreamBlock.orig_FastDeactivate orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, false);
-            private static void DreamBlock_DeactivateNoRoutine(On.Celeste.DreamBlock.orig_DeactivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy((self) => orig(self), self, false);
+            private static IEnumerator DreamBlock_Deactivate(On.Celeste.DreamBlock.orig_Deactivate orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, false);
+            private static IEnumerator DreamBlock_FastDeactivate(On.Celeste.DreamBlock.orig_FastDeactivate orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, false);
+            private static void DreamBlock_DeactivateNoRoutine(On.Celeste.DreamBlock.orig_DeactivateNoRoutine orig, DreamBlock self) => DoNothingIfDummy(() => orig(self), self, false);
 
-            private static void DoNothingIfDummy(Action<DreamBlock> orig, DreamBlock self, bool canDashThrough)
+            private static void DoNothingIfDummy(Action callOrig, DreamBlock self, bool canDashThrough)
             {
                 if (self is DreamBlockDummy dummy)
                 {
-                    dummy.CanDashThrough = canDashThrough;
-                    if (!dummy.Unlocked)
+                    if (dummy.Unlocked)
+                    {
+                        dummy.CanDashThrough = canDashThrough;
+                    }
+                    else
                         return;
                 }
-                orig(self);
+                callOrig();
             }
 
-            private static IEnumerator DoNothingIfDummy(Func<DreamBlock, IEnumerator> orig, DreamBlock self, bool canDashThrough)
+            private static IEnumerator DoNothingIfDummy(Func<IEnumerator> callOrig, DreamBlock self, bool canDashThrough)
             {
                 if (self is DreamBlockDummy dummy)
                 {
-                    dummy.CanDashThrough = canDashThrough;
-                    if (!dummy.Unlocked)
+                    if (dummy.Unlocked)
+                    {
+                        dummy.CanDashThrough = canDashThrough;
+                    }
+                    else
                         yield break;
                 }
-                yield return new SwapImmediately(orig(self));
+                yield return new SwapImmediately(callOrig());
             }
 
             private static void Player_DreamDashCheck(ILContext il)
