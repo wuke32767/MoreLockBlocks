@@ -66,13 +66,10 @@ public class MoreLockBlocksModule : EverestModule
         hook_Everest_Register = null;
 
         if (DzhakeHelperLoaded)
-        {
             UnloadDzhakeHelper();
-        }
+
         if (ReverseHelperLoaded)
-        {
             UnloadReverseHelper();
-        }
     }
 
     public override void LoadContent(bool firstLoad)
