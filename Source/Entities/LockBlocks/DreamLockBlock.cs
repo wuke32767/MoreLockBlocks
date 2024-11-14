@@ -248,9 +248,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         }
 
         private DreamBlockDummy dummy;
-
         private readonly bool dummyBelow;
-
         private readonly bool dummyIgnoreInventory;
 
         public DreamLockBlock(EntityData data, Vector2 offset, EntityID id) : base(data, offset, id, defaultUnlockSfx: MoreLockBlocksSFX.game_lockblocks_dreamlockblock_key_unlock)
