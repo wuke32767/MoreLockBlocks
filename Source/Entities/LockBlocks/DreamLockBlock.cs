@@ -62,7 +62,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             private readonly bool ignoreInventory;
 
-            private static ILHook hook_Player_DashCoroutine;
+            private static ILHook ilHook_Player_DashCoroutine;
 
             public DreamBlockDummy(Vector2 position, DreamLockBlock parent, bool below, bool ignoreInventory) : base(position, 32, 32, null, false, false, below)
             {
@@ -132,7 +132,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 {
                     IL.Celeste.Player.DreamDashCheck += Player_DreamDashCheck;
 
-                    hook_Player_DashCoroutine = new ILHook(typeof(Player).GetMethod("DashCoroutine", BindingFlags.Instance | BindingFlags.NonPublic).GetStateMachineTarget(), Player_DashCoroutine);
+                    ilHook_Player_DashCoroutine = new ILHook(typeof(Player).GetMethod("DashCoroutine", BindingFlags.Instance | BindingFlags.NonPublic).GetStateMachineTarget(), Player_DashCoroutine);
                 }
             }
 
@@ -150,8 +150,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 {
                     IL.Celeste.Player.DreamDashCheck -= Player_DreamDashCheck;
 
-                    hook_Player_DashCoroutine?.Dispose();
-                    hook_Player_DashCoroutine = null;
+                    ilHook_Player_DashCoroutine?.Dispose();
+                    ilHook_Player_DashCoroutine = null;
                 }
             }
 
