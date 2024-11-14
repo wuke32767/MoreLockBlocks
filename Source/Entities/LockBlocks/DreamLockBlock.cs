@@ -54,6 +54,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             private void SetReverseHelperDummyState(bool value)
             {
+                // i'm confused why the enum values are 1 << 0, 1 << 1, etc if this function doesn't actually support using a bitmask to set multiple enum variants at the same time :catplush:
                 Imports.ReverseHelperCall.ConfigureSetFromEnum(this, /*alwaysEnable =*/ 1 << 1, value);
                 Imports.ReverseHelperCall.ConfigureSetFromEnum(this, /*alwaysDisable =*/ 1 << 2, !value);
             }
