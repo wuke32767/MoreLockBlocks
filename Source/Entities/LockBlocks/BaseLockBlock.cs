@@ -55,6 +55,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         protected internal readonly string unlockSfxName;
 
+        private PlayerCollider playerCollider;
+
         public BaseLockBlockComponent(Solid This, EntityData data, Vector2 offset, EntityID id, string defaultSpriteID = "MoreLockBlocks_generic_lock", string defaultUnlockSfx = "event:/game/03_resort/key_unlock")
             //: base(data.Position + offset, 32f, 32f, false)
             : base(true, true)
@@ -77,7 +79,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             ID = id;
             RealEntity.DisableLightsInside = false;
-            RealEntity.Add(new PlayerCollider(OnPlayer, new Circle(60f, 16f, 16f)));
+            RealEntity.Add(playerCollider = new PlayerCollider(OnPlayer, new Circle(60f, 16f, 16f)));
 
             RealEntity.Add(Sprite = string.IsNullOrWhiteSpace(overrideSpritePath = data.Attr("spritePath", "")) ? MoreLockBlocksGFX.SpriteBank.Create(defaultSpriteID) : BuildCustomSprite(overrideSpritePath));
             Sprite.Play("idle");
@@ -297,6 +299,12 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             yield return Sprite.PlayRoutine("burst");
 
             RealEntity.RemoveSelf();
+        }
+
+        internal void Remove()
+        {
+            playerCollider.RemoveSelf();
+            Sprite.RemoveSelf();
         }
 
         #endregion
