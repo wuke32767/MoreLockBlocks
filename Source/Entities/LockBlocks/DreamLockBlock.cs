@@ -257,10 +257,16 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             SurfaceSoundIndex = 11;
             dummyBelow = data.Bool("below", false);
             dummyIgnoreInventory = data.Bool("ignoreInventory", false);
-            component.TryOpen_DzhakeHelperLoaded = TryOpen_DzhakeHelperLoaded;
-            component.TryOpen_DzhakeHelperUnloaded = TryOpen_DzhakeHelperUnloaded;
-            component.UnlockRoutine_DzhakeHelperLoaded = UnlockRoutine_DzhakeHelperLoaded;
-            component.UnlockRoutine_DzhakeHelperUnloaded = UnlockRoutine_DzhakeHelperUnloaded;
+            if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
+            {
+                component.TryOpen = TryOpen_DzhakeHelperLoaded;
+                component.UnlockRoutine = UnlockRoutine_DzhakeHelperLoaded;
+            }
+            else
+            {
+                component.TryOpen = TryOpen_DzhakeHelperUnloaded;
+                component.UnlockRoutine = UnlockRoutine_DzhakeHelperUnloaded;
+            }
         }
 
         public override void Added(Scene scene)

@@ -60,12 +60,20 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             : base(true, true)
         {
             RealEntity = This;
-            OnPlayer_DzhakeHelperLoaded = default_OnPlayer_DzhakeHelperLoaded;
-            OnPlayer_DzhakeHelperUnloaded = default_OnPlayer_DzhakeHelperUnloaded;
-            TryOpen_DzhakeHelperLoaded = default_TryOpen_DzhakeHelperLoaded;
-            TryOpen_DzhakeHelperUnloaded = default_TryOpen_DzhakeHelperUnloaded;
-            UnlockRoutine_DzhakeHelperLoaded = default_UnlockRoutine_DzhakeHelperLoaded;
-            UnlockRoutine_DzhakeHelperUnloaded = default_UnlockRoutine_DzhakeHelperUnloaded;
+            if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
+            {
+                OnPlayer = default_OnPlayer_DzhakeHelperLoaded;
+                UnlockRoutine = default_UnlockRoutine_DzhakeHelperLoaded;
+                TryOpen = default_TryOpen_DzhakeHelperLoaded;
+            }
+            else
+            {
+                OnPlayer = default_OnPlayer_DzhakeHelperUnloaded;
+                UnlockRoutine = default_UnlockRoutine_DzhakeHelperUnloaded;
+                TryOpen = default_TryOpen_DzhakeHelperUnloaded;
+            }
+
+
 
             ID = id;
             RealEntity.DisableLightsInside = false;
@@ -113,19 +121,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         #region OnPlayer
 
-        protected internal void OnPlayer(Player player)
-        {
-            if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
-            {
-                OnPlayer_DzhakeHelperLoaded(player);
-            }
-            else
-            {
-                OnPlayer_DzhakeHelperUnloaded(player);
-            }
-        }
-
-        protected internal Action<Player> OnPlayer_DzhakeHelperLoaded;
+        protected internal Action<Player> OnPlayer;
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected internal virtual void default_OnPlayer_DzhakeHelperLoaded(Player player)
         {
@@ -148,7 +144,6 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             }
         }
 
-        protected internal Action<Player> OnPlayer_DzhakeHelperUnloaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected internal virtual void default_OnPlayer_DzhakeHelperUnloaded(Player player)
         {
@@ -169,19 +164,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         #endregion
         #region TryOpen
 
-        protected internal void TryOpen(Player player, Follower fol)
-        {
-            if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
-            {
-                TryOpen_DzhakeHelperLoaded(player, fol);
-            }
-            else
-            {
-                TryOpen_DzhakeHelperUnloaded(player, fol);
-            }
-        }
-
-        protected internal Action<Player, Follower> TryOpen_DzhakeHelperLoaded;
+        protected internal Action<Player, Follower> TryOpen;
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected internal virtual void default_TryOpen_DzhakeHelperLoaded(Player player, Follower fol)
         {
@@ -202,7 +185,6 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             RealEntity.Collidable = true;
         }
 
-        protected internal Action<Player, Follower> TryOpen_DzhakeHelperUnloaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected internal virtual void default_TryOpen_DzhakeHelperUnloaded(Player player, Follower fol)
         {
@@ -222,19 +204,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         #endregion
         #region UnlockRoutine
 
-        protected internal IEnumerator UnlockRoutine(Follower fol)
-        {
-            if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
-            {
-                yield return new SwapImmediately(UnlockRoutine_DzhakeHelperLoaded(fol));
-            }
-            else
-            {
-                yield return new SwapImmediately(UnlockRoutine_DzhakeHelperUnloaded(fol));
-            }
-        }
-
-        protected internal Func<Follower, IEnumerator> UnlockRoutine_DzhakeHelperLoaded;
+        protected internal Func<Follower, IEnumerator> UnlockRoutine;
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected internal virtual IEnumerator default_UnlockRoutine_DzhakeHelperLoaded(Follower fol)
         {
@@ -293,7 +263,6 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             RealEntity.RemoveSelf();
         }
 
-        protected internal Func<Follower, IEnumerator> UnlockRoutine_DzhakeHelperUnloaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected internal virtual IEnumerator default_UnlockRoutine_DzhakeHelperUnloaded(Follower fol)
         {
