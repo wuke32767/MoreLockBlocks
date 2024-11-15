@@ -4,6 +4,7 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using Celeste.Mod.DzhakeHelper;
 using Celeste.Mod.DzhakeHelper.Entities;
+using System;
 
 namespace Celeste.Mod.MoreLockBlocks.Entities
 {
@@ -20,10 +21,10 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         public Solid RealEntity;
         public EntityID ID;
 
-        protected readonly string overrideSpritePath;
+        protected internal readonly string overrideSpritePath;
         public readonly Sprite Sprite;
 
-        protected struct OpeningSettings
+        protected internal struct OpeningSettings
         {
             public bool VanillaKeys;
 
@@ -31,20 +32,27 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             public bool DzhakeHelperKeysAll;
             public int DzhakeHelperKeyGroup;
         }
-        protected OpeningSettings openingSettings;
+        protected internal OpeningSettings openingSettings;
 
-        protected bool opening;
+        protected internal bool opening;
         public bool UnlockingRegistered;
 
-        protected readonly bool stepMusicProgress;
+        protected internal readonly bool stepMusicProgress;
 
-        protected readonly string unlockSfxName;
+        protected internal readonly string unlockSfxName;
 
         public BaseLockBlockComponent(Solid This,EntityData data, Vector2 offset, EntityID id, string defaultSpriteID = "MoreLockBlocks_generic_lock", string defaultUnlockSfx = "event:/game/03_resort/key_unlock") 
             //: base(data.Position + offset, 32f, 32f, false)
             :base(true,true)
         {
             RealEntity = This;
+            OnPlayer_DzhakeHelperLoaded=default_OnPlayer_DzhakeHelperLoaded;
+            OnPlayer_DzhakeHelperUnloaded=default_OnPlayer_DzhakeHelperUnloaded;
+            TryOpen_DzhakeHelperLoaded=default_TryOpen_DzhakeHelperLoaded;
+            TryOpen_DzhakeHelperUnloaded=default_TryOpen_DzhakeHelperUnloaded;
+            UnlockRoutine_DzhakeHelperLoaded=default_UnlockRoutine_DzhakeHelperLoaded;
+            UnlockRoutine_DzhakeHelperUnloaded= default_UnlockRoutine_DzhakeHelperUnloaded;
+
             ID = id;
             RealEntity.DisableLightsInside = false;
             RealEntity.Add(new PlayerCollider(OnPlayer, new Circle(60f, 16f, 16f)));
@@ -70,7 +78,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
                 unlockSfxName = SFX.EventnameByHandle(unlockSfxName);
         }
 
-        protected static Sprite BuildCustomSprite(string spritePath)
+        protected internal static Sprite BuildCustomSprite(string spritePath)
         {
             /*
                 <Justify x="0.5" y="0.5" />
@@ -91,7 +99,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         #region OnPlayer
 
-        protected void OnPlayer(Player player)
+        protected internal void OnPlayer(Player player)
         {
             if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
             {
@@ -103,8 +111,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             }
         }
 
+        protected internal Action<Player> OnPlayer_DzhakeHelperLoaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected virtual void OnPlayer_DzhakeHelperLoaded(Player player)
+        protected internal virtual void default_OnPlayer_DzhakeHelperLoaded(Player player)
         {
             if (opening)
             {
@@ -125,8 +134,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             }
         }
 
+        protected internal Action<Player> OnPlayer_DzhakeHelperUnloaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected virtual void OnPlayer_DzhakeHelperUnloaded(Player player)
+        protected internal virtual void default_OnPlayer_DzhakeHelperUnloaded(Player player)
         {
             if (opening)
             {
@@ -145,7 +155,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         #endregion
         #region TryOpen
 
-        protected void TryOpen(Player player, Follower fol)
+        protected internal void TryOpen(Player player, Follower fol)
         {
             if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
             {
@@ -157,8 +167,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             }
         }
 
+        protected internal Action<Player,Follower> TryOpen_DzhakeHelperLoaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected virtual void TryOpen_DzhakeHelperLoaded(Player player, Follower fol)
+        protected internal virtual void default_TryOpen_DzhakeHelperLoaded(Player player, Follower fol)
         {
             RealEntity.Collidable = false;
             if (!RealEntity.Scene.CollideCheck<Solid>(player.Center, RealEntity.Center))
@@ -177,8 +188,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             RealEntity.Collidable = true;
         }
 
+        protected internal Action<Player,Follower> TryOpen_DzhakeHelperUnloaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected virtual void TryOpen_DzhakeHelperUnloaded(Player player, Follower fol)
+        protected internal virtual void default_TryOpen_DzhakeHelperUnloaded(Player player, Follower fol)
         {
             RealEntity.Collidable = false;
             if (!RealEntity.Scene.CollideCheck<Solid>(player.Center, RealEntity.Center))
@@ -196,7 +208,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         #endregion
         #region UnlockRoutine
 
-        protected IEnumerator UnlockRoutine(Follower fol)
+        protected internal IEnumerator UnlockRoutine(Follower fol)
         {
             if (MoreLockBlocksModule.Instance.DzhakeHelperLoaded)
             {
@@ -208,8 +220,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             }
         }
 
+        protected internal Func<Follower,IEnumerator> UnlockRoutine_DzhakeHelperLoaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected virtual IEnumerator UnlockRoutine_DzhakeHelperLoaded(Follower fol)
+        protected internal virtual IEnumerator default_UnlockRoutine_DzhakeHelperLoaded(Follower fol)
         {
             SoundEmitter emitter = SoundEmitter.Play(unlockSfxName, RealEntity);
             emitter.Source.DisposeOnTransition = true;
@@ -266,8 +279,9 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             RealEntity.RemoveSelf();
         }
 
+        protected internal Func<Follower,IEnumerator> UnlockRoutine_DzhakeHelperUnloaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected virtual IEnumerator UnlockRoutine_DzhakeHelperUnloaded(Follower fol)
+        protected internal virtual IEnumerator default_UnlockRoutine_DzhakeHelperUnloaded(Follower fol)
         {
             SoundEmitter emitter = SoundEmitter.Play(unlockSfxName, RealEntity);
             emitter.Source.DisposeOnTransition = true;
