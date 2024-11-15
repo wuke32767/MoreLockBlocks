@@ -15,9 +15,20 @@ using System.Runtime.CompilerServices;
 namespace Celeste.Mod.MoreLockBlocks.Entities
 {
     [Tracked]
-    [CustomEntity("MoreLockBlocks/DreamLockBlock")]
+    [CustomEntity("MoreLockBlocks/DreamLockBlock=Load")]
     public class DreamLockBlock : LegacyBaseLockBlock
     {
+        public static Entity Load(Level level, LevelData levelData, Vector2 offset, EntityData entityData)
+        {
+            if (MoreLockBlocksModule.PatchLoaded)
+            {
+                return new DreamLockBlockV2(entityData, offset, new EntityID(levelData.Name, entityData.ID));
+            }
+            else
+            {
+                return new DreamLockBlock(entityData, offset, new EntityID(levelData.Name, entityData.ID));
+            }
+        }
         [TrackedAs(typeof(DreamBlock))]
         internal class DreamBlockDummy : DreamBlock
         {
@@ -120,6 +131,11 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             public static void Load()
             {
+                if (MoreLockBlocksModule.PatchLoaded)
+                {
+                    DreamLockBlockV2.Load();
+                    return;
+                }
                 IL.Celeste.DreamBlock.Added += DreamBlock_Added;
                 On.Celeste.DreamBlock.Activate += DreamBlock_Activate;
                 On.Celeste.DreamBlock.FastActivate += DreamBlock_FastActivate;
@@ -138,6 +154,11 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             public static void Unload()
             {
+                if (MoreLockBlocksModule.PatchLoaded)
+                {
+                    DreamLockBlockV2.Unload();
+                    return;
+                }
                 IL.Celeste.DreamBlock.Added -= DreamBlock_Added;
                 On.Celeste.DreamBlock.Activate -= DreamBlock_Activate;
                 On.Celeste.DreamBlock.FastActivate -= DreamBlock_FastActivate;

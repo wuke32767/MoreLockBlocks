@@ -9,6 +9,8 @@ namespace Celeste.Mod.MoreLockBlocks;
 
 public class MoreLockBlocksModule : EverestModule
 {
+    public static readonly bool PatchLoaded = typeof(DreamBlock).GetField("DreamBlockPatch", BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic) is not null;
+
     public static MoreLockBlocksModule Instance { get; private set; }
 
     public override Type SettingsType => typeof(MoreLockBlocksModuleSettings);
