@@ -1,17 +1,16 @@
-using Monocle;
-using Microsoft.Xna.Framework;
-using Celeste.Mod.Entities;
-using System.Collections;
-using MonoMod.Cil;
-using System.Reflection;
-using Mono.Cecil.Cil;
 using Celeste.Mod.DzhakeHelper;
 using Celeste.Mod.DzhakeHelper.Entities;
-using System.Runtime.CompilerServices;
-using System;
-using MonoMod.Utils;
+using Celeste.Mod.Entities;
+using Microsoft.Xna.Framework;
+using Mono.Cecil.Cil;
+using Monocle;
+using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
-using Celeste.Mod.MoreLockBlocks.Imports;
+using MonoMod.Utils;
+using System;
+using System.Collections;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Celeste.Mod.MoreLockBlocks.Entities
 {
@@ -257,6 +256,10 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             SurfaceSoundIndex = 11;
             dummyBelow = data.Bool("below", false);
             dummyIgnoreInventory = data.Bool("ignoreInventory", false);
+            component.TryOpen_DzhakeHelperLoaded = TryOpen_DzhakeHelperLoaded;
+            component.TryOpen_DzhakeHelperUnloaded = TryOpen_DzhakeHelperUnloaded;
+            component.UnlockRoutine_DzhakeHelperLoaded = UnlockRoutine_DzhakeHelperLoaded;
+            component.UnlockRoutine_DzhakeHelperUnloaded = UnlockRoutine_DzhakeHelperUnloaded;
         }
 
         public override void Added(Scene scene)
@@ -274,7 +277,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         #region TryOpen
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected override void TryOpen_DzhakeHelperLoaded(Player player, Follower fol)
+        protected void TryOpen_DzhakeHelperLoaded(Player player, Follower fol)
         {
             Collidable = dummy.Collidable = false;
             if (!Scene.CollideCheck<Solid>(player.Center, Center))
@@ -294,7 +297,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected override void TryOpen_DzhakeHelperUnloaded(Player player, Follower fol)
+        protected void TryOpen_DzhakeHelperUnloaded(Player player, Follower fol)
         {
             Collidable = dummy.Collidable = false;
             if (!Scene.CollideCheck<Solid>(player.Center, Center))
@@ -313,7 +316,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         #region UnlockRoutine
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected override IEnumerator UnlockRoutine_DzhakeHelperLoaded(Follower fol)
+        protected IEnumerator UnlockRoutine_DzhakeHelperLoaded(Follower fol)
         {
             SoundEmitter emitter = SoundEmitter.Play(unlockSfxName, this);
             emitter.Source.DisposeOnTransition = true;
@@ -373,7 +376,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected override IEnumerator UnlockRoutine_DzhakeHelperUnloaded(Follower fol)
+        protected IEnumerator UnlockRoutine_DzhakeHelperUnloaded(Follower fol)
         {
             SoundEmitter emitter = SoundEmitter.Play(unlockSfxName, this);
             emitter.Source.DisposeOnTransition = true;
