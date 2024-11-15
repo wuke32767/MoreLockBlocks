@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 #nullable enable
 namespace Celeste.Mod.MoreLockBlocks.Imports
 {
-    public static class ReverseHelperCall
+    public static class ReverseHelperCallHelper
     {
         /// <summary>
         /// if a entity acts like DreamBlock but is not DreamBlock, use this. 

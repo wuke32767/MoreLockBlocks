@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System;
 using MonoMod.Utils;
 using MonoMod.RuntimeDetour;
+using Celeste.Mod.MoreLockBlocks.Imports;
 
 namespace Celeste.Mod.MoreLockBlocks.Entities
 {
@@ -54,8 +55,8 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
             private void SetReverseHelperDummyState(bool value)
             {
-                Imports.ReverseHelperCall.ConfigureSetFromEnum(this, /*alwaysEnable =*/ 1 << 1, value);
-                Imports.ReverseHelperCall.ConfigureSetFromEnum(this, /*alwaysDisable =*/ 1 << 2, !value);
+                ReverseHelperCallHelper.ConfigureSetFromEnum(this, /*alwaysEnable =*/ 1 << 1, value);
+                ReverseHelperCallHelper.ConfigureSetFromEnum(this, /*alwaysDisable =*/ 1 << 2, !value);
             }
 
             private bool Unlocked => MoreLockBlocksModule.Session.UnlockedDreamLockBlocks.Contains(parent.ID); // whether we can change state
