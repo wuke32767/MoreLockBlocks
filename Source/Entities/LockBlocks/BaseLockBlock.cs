@@ -28,7 +28,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         {
             Add(component = new BaseLockBlockComponent(this, data, offset, id, defaultSpriteID, defaultSpriteID));
         }
-        readonly BaseLockBlockComponent component;
+        protected readonly BaseLockBlockComponent component;
     }
     public class BaseLockBlockComponent : Component
     {
