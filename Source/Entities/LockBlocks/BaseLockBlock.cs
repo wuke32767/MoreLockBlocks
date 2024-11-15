@@ -1,20 +1,34 @@
-using Microsoft.Xna.Framework;
-using Monocle;
-using System.Collections;
-using System.Runtime.CompilerServices;
 using Celeste.Mod.DzhakeHelper;
 using Celeste.Mod.DzhakeHelper.Entities;
+using Microsoft.Xna.Framework;
+using Monocle;
 using System;
+using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Celeste.Mod.MoreLockBlocks.Entities
 {
-    public abstract class BaseLockBlock : Solid
+    public abstract class LegacyBaseLockBlock : Solid
     {
-        public BaseLockBlock(EntityData data, Vector2 offset, EntityID id, string defaultSpriteID = "MoreLockBlocks_generic_lock", string defaultUnlockSfx = "event:/game/03_resort/key_unlock") 
+        public EntityID ID => component.ID;
+
+        protected internal string overrideSpritePath => component.overrideSpritePath;
+        public Sprite Sprite => component.Sprite;
+
+        protected internal BaseLockBlockComponent.OpeningSettings openingSettings { get => component.openingSettings; set => component.openingSettings = value; }
+
+        protected internal bool opening { get => component.opening; set => component.opening = value; }
+        public bool UnlockingRegistered { get => component.UnlockingRegistered; set => component.UnlockingRegistered = value; }
+
+        protected internal bool stepMusicProgress => component.stepMusicProgress;
+
+        protected internal string unlockSfxName => component.unlockSfxName;
+        public LegacyBaseLockBlock(EntityData data, Vector2 offset, EntityID id, string defaultSpriteID = "MoreLockBlocks_generic_lock", string defaultUnlockSfx = "event:/game/03_resort/key_unlock")
             : base(data.Position + offset, 32f, 32f, false)
         {
-            Add(new BaseLockBlockComponent(this, data, offset, id, defaultSpriteID, defaultSpriteID));
+            Add(component = new BaseLockBlockComponent(this, data, offset, id, defaultSpriteID, defaultSpriteID));
         }
+        readonly BaseLockBlockComponent component;
     }
     public class BaseLockBlockComponent : Component
     {
@@ -24,7 +38,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
         protected internal readonly string overrideSpritePath;
         public readonly Sprite Sprite;
 
-        protected internal struct OpeningSettings
+        public struct OpeningSettings
         {
             public bool VanillaKeys;
 
@@ -41,17 +55,17 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         protected internal readonly string unlockSfxName;
 
-        public BaseLockBlockComponent(Solid This,EntityData data, Vector2 offset, EntityID id, string defaultSpriteID = "MoreLockBlocks_generic_lock", string defaultUnlockSfx = "event:/game/03_resort/key_unlock") 
+        public BaseLockBlockComponent(Solid This, EntityData data, Vector2 offset, EntityID id, string defaultSpriteID = "MoreLockBlocks_generic_lock", string defaultUnlockSfx = "event:/game/03_resort/key_unlock")
             //: base(data.Position + offset, 32f, 32f, false)
-            :base(true,true)
+            : base(true, true)
         {
             RealEntity = This;
-            OnPlayer_DzhakeHelperLoaded=default_OnPlayer_DzhakeHelperLoaded;
-            OnPlayer_DzhakeHelperUnloaded=default_OnPlayer_DzhakeHelperUnloaded;
-            TryOpen_DzhakeHelperLoaded=default_TryOpen_DzhakeHelperLoaded;
-            TryOpen_DzhakeHelperUnloaded=default_TryOpen_DzhakeHelperUnloaded;
-            UnlockRoutine_DzhakeHelperLoaded=default_UnlockRoutine_DzhakeHelperLoaded;
-            UnlockRoutine_DzhakeHelperUnloaded= default_UnlockRoutine_DzhakeHelperUnloaded;
+            OnPlayer_DzhakeHelperLoaded = default_OnPlayer_DzhakeHelperLoaded;
+            OnPlayer_DzhakeHelperUnloaded = default_OnPlayer_DzhakeHelperUnloaded;
+            TryOpen_DzhakeHelperLoaded = default_TryOpen_DzhakeHelperLoaded;
+            TryOpen_DzhakeHelperUnloaded = default_TryOpen_DzhakeHelperUnloaded;
+            UnlockRoutine_DzhakeHelperLoaded = default_UnlockRoutine_DzhakeHelperLoaded;
+            UnlockRoutine_DzhakeHelperUnloaded = default_UnlockRoutine_DzhakeHelperUnloaded;
 
             ID = id;
             RealEntity.DisableLightsInside = false;
@@ -167,7 +181,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             }
         }
 
-        protected internal Action<Player,Follower> TryOpen_DzhakeHelperLoaded;
+        protected internal Action<Player, Follower> TryOpen_DzhakeHelperLoaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected internal virtual void default_TryOpen_DzhakeHelperLoaded(Player player, Follower fol)
         {
@@ -188,7 +202,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             RealEntity.Collidable = true;
         }
 
-        protected internal Action<Player,Follower> TryOpen_DzhakeHelperUnloaded;
+        protected internal Action<Player, Follower> TryOpen_DzhakeHelperUnloaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected internal virtual void default_TryOpen_DzhakeHelperUnloaded(Player player, Follower fol)
         {
@@ -220,7 +234,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             }
         }
 
-        protected internal Func<Follower,IEnumerator> UnlockRoutine_DzhakeHelperLoaded;
+        protected internal Func<Follower, IEnumerator> UnlockRoutine_DzhakeHelperLoaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected internal virtual IEnumerator default_UnlockRoutine_DzhakeHelperLoaded(Follower fol)
         {
@@ -279,7 +293,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
             RealEntity.RemoveSelf();
         }
 
-        protected internal Func<Follower,IEnumerator> UnlockRoutine_DzhakeHelperUnloaded;
+        protected internal Func<Follower, IEnumerator> UnlockRoutine_DzhakeHelperUnloaded;
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected internal virtual IEnumerator default_UnlockRoutine_DzhakeHelperUnloaded(Follower fol)
         {

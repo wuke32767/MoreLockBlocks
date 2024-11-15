@@ -17,7 +17,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 {
     [Tracked]
     [CustomEntity("MoreLockBlocks/DreamLockBlock")]
-    public class DreamLockBlock : BaseLockBlock
+    public class DreamLockBlock : LegacyBaseLockBlock
     {
         [TrackedAs(typeof(DreamBlock))]
         internal class DreamBlockDummy : DreamBlock

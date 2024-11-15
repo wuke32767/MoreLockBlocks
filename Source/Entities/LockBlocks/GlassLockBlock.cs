@@ -10,7 +10,7 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 {
     [Tracked]
     [CustomEntity("MoreLockBlocks/GlassLockBlock")]
-    public class GlassLockBlock : BaseLockBlock
+    public class GlassLockBlock : LegacyBaseLockBlock
     {
         private const string spriteID = "MoreLockBlocks_generic_lock";
 
