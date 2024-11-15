@@ -9,6 +9,14 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 {
     public abstract class BaseLockBlock : Solid
     {
+        public BaseLockBlock(EntityData data, Vector2 offset, EntityID id, string defaultSpriteID = "MoreLockBlocks_generic_lock", string defaultUnlockSfx = "event:/game/03_resort/key_unlock") 
+            : base(data.Position + offset, 32f, 32f, false)
+        {
+            Add(new BaseLockBlockComponent(this, data, offset, id, defaultSpriteID, defaultSpriteID));
+        }
+    }
+    public class BaseLockBlockComponent : Component
+    {
         public Solid RealEntity;
         public EntityID ID;
 
@@ -32,8 +40,11 @@ namespace Celeste.Mod.MoreLockBlocks.Entities
 
         protected readonly string unlockSfxName;
 
-        public BaseLockBlock(EntityData data, Vector2 offset, EntityID id, string defaultSpriteID = "MoreLockBlocks_generic_lock", string defaultUnlockSfx = "event:/game/03_resort/key_unlock") : base(data.Position + offset, 32f, 32f, false)
+        public BaseLockBlockComponent(Solid This,EntityData data, Vector2 offset, EntityID id, string defaultSpriteID = "MoreLockBlocks_generic_lock", string defaultUnlockSfx = "event:/game/03_resort/key_unlock") 
+            //: base(data.Position + offset, 32f, 32f, false)
+            :base(true,true)
         {
+            RealEntity = This;
             ID = id;
             RealEntity.DisableLightsInside = false;
             RealEntity.Add(new PlayerCollider(OnPlayer, new Circle(60f, 16f, 16f)));
